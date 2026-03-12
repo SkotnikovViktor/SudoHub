@@ -1,3 +1,4 @@
+#ПОЧЕМУ В MAIN???
 import socket
 import torch
 from transformers import AutoTokenizer, AutoModelForMaskedLM
