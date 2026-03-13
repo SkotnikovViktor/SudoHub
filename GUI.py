@@ -39,14 +39,12 @@ class App(ctk.CTk):
                                         text="Результат проверки",
                                         )
         #результат проверки
-        self.resultLabel2 = ctk.CTkLabel(master=self,
+        self.resultLabel2 = ctk.CTkTextbox(master=self,
                                          height=480,
                                          width=313,
                                          bg_color="#E7F3EF",
-                                         text='',
-                                         anchor="nw",# слева сверху типа блять восток и север компас ебанный
-                                         wraplength= 300, #перенос тут по уебански че за библеотека даунская в пискселях блять перенос
-                                         justify="left",
+                                         wrap="word",
+                                        state="disabled",
                                          )
         '''Текст холдер(жесть)'''
         self.textholder = "Введите текст для проверки\nили перетащите файл сюда"
@@ -79,18 +77,24 @@ class App(ctk.CTk):
         sepatator.place(x=358, y=50+28)
 
     def check_btn_func(self):
+        self.resultLabel2.configure(state="normal")
+        self.resultLabel2.delete("1.0", "end")
+        self.resultLabel2.configure(state="disabled")
         checktext = self.check_entry.get("1.0", "end").strip()
         if len(checktext) > 0 and checktext != self.textholder:
-            self.resultLabel2.configure(text=checktext) #поменять на функцию
+            self.resultLabel2.configure(state="normal")
+            self.resultLabel2.insert("1.0", checktext) #поменять на функцию
+            self.resultLabel2.configure(state="disabled")
         else:
-            self.resultLabel2.configure(text="Введите что-нибудь")
+            self.resultLabel2.configure(state="normal")
+            self.resultLabel2.insert("1.0", "Введите что-нибудь")
+            self.resultLabel2.configure(state="disabled")
 
     def writeplaceholder(self, event=None):
-        if (self.check_entry.get("1.0", "end").strip() != ""
-                and self.check_entry.get("1.0", "end").strip() != self.textholder):
+        if self.check_entry.get("1.0", "end").strip() == "":
             self.check_entry.insert("1.0", self.textholder)
             self.check_entry.configure(text_color="grey")
-            self.label_fileimage.place(x=150, y=73)
+            self.label_fileimage.place(x=197, y=73)
 
     def deleteplaceholder(self, event=None):
         if self.check_entry.get("1.0", "end").strip() == self.textholder:
