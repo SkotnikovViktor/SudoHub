@@ -2,7 +2,7 @@ import customtkinter as ctk
 from PIL import Image as Img
 
 '''
-поддержка файлов word txt DRAG N DROP 
+поддержка файлов word txt DRAG N DROP еще добавить слов символов без пробелов 
 '''
 class App(ctk.CTk):
     def __init__(self):
