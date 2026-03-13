@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from PIL import Image as IMG
+from PIL import Image as Img
 
 '''
 поддержка файлов word txt DRAG N DROP 
@@ -55,7 +55,7 @@ class App(ctk.CTk):
 
 
         '''картинка файлов'''
-        fileimage = IMG.open("Assets/Images/file.png")
+        fileimage = Img.open("Assets/Images/file.png")
         self.icon_label = ctk.CTkImage(light_image=fileimage, dark_image=fileimage, size=(16, 16))
         self.label_fileimage = ctk.CTkLabel(master=self,
                                             image=self.icon_label,
