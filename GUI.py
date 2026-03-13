@@ -1,6 +1,8 @@
 import customtkinter as ctk
+from PIL import Image as IMG
+
 '''
-добавить textholder, поддержка файлов word txt 
+поддержка файлов word txt DRAG N DROP 
 '''
 class App(ctk.CTk):
     def __init__(self):
@@ -42,14 +44,30 @@ class App(ctk.CTk):
                                          width=313,
                                          bg_color="#E7F3EF",
                                          text='',
-                                         anchor="nw") # слева сверху типа блять восток и север компас ебанный
+                                         anchor="nw",# слева сверху типа блять восток и север компас ебанный
+                                         wraplength= 300, #перенос тут по уебански че за библеотека даунская в пискселях блять перенос
+                                         justify="left",
+                                         )
         '''Текст холдер(жесть)'''
-        self.textholder = "Введите текст для проверки\nили отправьте файл"
+        self.textholder = "Введите текст для проверки\nили перетащите файл сюда"
         self.check_entry.bind("<FocusIn>", self.deleteplaceholder)
         self.check_entry.bind("<FocusOut>", self.writeplaceholder)
         self.check_entry.insert("1.0", self.textholder)
         self.check_entry.configure(text_color="grey")
+
+
+        '''картинка файлов'''
+        fileimage = IMG.open("Assets/Images/file.png")
+        self.icon_label = ctk.CTkImage(light_image=fileimage, dark_image=fileimage, size=(16, 16))
+        self.label_fileimage = ctk.CTkLabel(master=self,
+                                            image=self.icon_label,
+                                            text='',
+                                            width=16,
+                                            height=16,
+                                            bg_color='white',)
+
         '''размещения'''
+        self.label_fileimage.place(x=197, y=73)
         self.check_entry.place(x=16, y=50)
         self.resultLabel.place(x=358, y=50)
         self.button.place(x= 16, y=482)
@@ -68,13 +86,18 @@ class App(ctk.CTk):
             self.resultLabel2.configure(text="Введите что-нибудь")
 
     def writeplaceholder(self, event=None):
-        if self.check_entry.get("1.0", "end").strip() != "" and self.check_entry.get("1.0", "end").strip() != self.textholder:
+        if (self.check_entry.get("1.0", "end").strip() != ""
+                and self.check_entry.get("1.0", "end").strip() != self.textholder):
             self.check_entry.insert("1.0", self.textholder)
             self.check_entry.configure(text_color="grey")
+            self.label_fileimage.place(x=150, y=73)
+
     def deleteplaceholder(self, event=None):
         if self.check_entry.get("1.0", "end").strip() == self.textholder:
             self.check_entry.delete("1.0", "end")
             self.check_entry.configure(text_color="black")
+            self.label_fileimage.place_forget()
+
 
 
 if __name__ == '__main__':
