@@ -4,5 +4,4 @@
 - socket
 - torch
 - transformers
-- threading
 - math
