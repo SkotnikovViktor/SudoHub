@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from PIL import Image as Img
+from PIL import Image, ImageTk
 
 '''
 поддержка файлов word txt DRAG N DROP еще добавить слов символов без пробелов 
@@ -12,9 +12,14 @@ class App(ctk.CTk):
         self.title("SudoHub") # название окна
         self.resizable(False, False) # зиприт на измэнения
 
-        #ебля с иконкой
-        icopath = "Assets/Images/ICO.ico"
-        self.iconbitmap(icopath)
+        # Использяем try except для того чтобы точно установить иконку приложению независимо от ОС
+        try:
+            icon = Image.open("Assets/Images/ICO.ico")
+        except:
+            icon = Image.open(r"Assets\Images\ICO.ico")
+        photo_icon = ImageTk.PhotoImage(icon)
+        self.iconphoto(False, photo_icon)
+
 
         #кнопка
         self.button = ctk.CTkButton(master=self,
@@ -23,8 +28,10 @@ class App(ctk.CTk):
                                     width=312,
                                     height=81,
                                     corner_radius=10,
-                                    fg_color="#53B962",
-                                    hover_color="#59CF6A")
+                                    fg_color="#59CF6A",
+                                    hover_color="#59CF6A",
+                                    font = ("Arial", 30))
+                                    
         #то куда надо вводить
         self.check_entry = ctk.CTkTextbox(master=self,
                                         wrap = "word",
@@ -35,7 +42,7 @@ class App(ctk.CTk):
         self.resultLabel = ctk.CTkLabel(master=self,
                                         height=28,
                                         width=313,
-                                        bg_color="#E7F3EF",
+                                        bg_color="#000000",
                                         text="Результат проверки",
                                         )
         #результат проверки
@@ -55,7 +62,7 @@ class App(ctk.CTk):
 
 
         '''картинка файлов'''
-        fileimage = Img.open("Assets/Images/file.png")
+        fileimage = Image.open("Assets/Images/file.png")
         self.icon_label = ctk.CTkImage(light_image=fileimage, dark_image=fileimage, size=(16, 16))
         self.label_fileimage = ctk.CTkLabel(master=self,
                                             image=self.icon_label,
