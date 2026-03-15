@@ -1,12 +1,14 @@
 import customtkinter as ctk
-from PIL import Image, ImageTk
-
+import os
+from PIL import Image
+from tkinterdnd2 import DND_FILES, TkinterDnD
 '''
-поддержка файлов word txt DRAG N DROP еще добавить слов символов без пробелов 
+добавить поддержку word pdf
 '''
-class App(ctk.CTk):
+class App(ctk.CTk, TkinterDnD.DnDWrapper):
     def __init__(self):
         ctk.CTk.__init__(self)
+        self.TkdndVersion = TkinterDnD._require(self) # это типа регистрация чтобы self. и там были функции drop
         self.configure(fg_color='#3E304D')# фон окна
         self.geometry("703x619") #размер окна
         self.title("SudoHub") # название окна
@@ -58,6 +60,10 @@ class App(ctk.CTk):
         self.check_entry.insert("1.0", self.textholder)
         self.check_entry.configure(text_color="grey")
 
+        '''Drop files пиздец'''
+        self.check_entry.drop_target_register(DND_FILES) # регистрация что я сюда могу кинуть файлы
+        self.check_entry.dnd_bind("<<Drop>>", self.drop_inside_textBox) # действие на событие <<drop>>
+
 
         '''картинка файлов'''
         fileimage = Image.open("Assets/Images/file.png")
@@ -108,6 +114,26 @@ class App(ctk.CTk):
             self.label_fileimage.place_forget()
 
 
+    def drop_inside_textBox(self, event):
+        filepatch = event.data
+        extension = os.path.splitext(filepatch)[1].replace("{}", '').replace("{", '').replace("}", '')
+        #print(extension)
+        content = ''
+        if extension == ".txt":
+            file = open(filepatch, "r", encoding="utf-8")
+            for line in file:
+                content += line
+
+        elif extension == ".pdf":
+            print("pdf")
+        elif extension == ".docx":
+            print("docx")
+        else:
+            content = "Unknown filetype"
+
+        self.check_entry.delete("1.0", "end") # убрать текстхолдер
+        self.label_fileimage.place_forget() # скрыть картинку файла
+        self.check_entry.insert("1.0", content) # записать содержимое файла
 
 if __name__ == '__main__':
     app = App()
