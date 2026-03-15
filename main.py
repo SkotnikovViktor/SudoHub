@@ -1,7 +1,12 @@
 import socket
 import torch
-from transformers import AutoTokenizer, AutoModelForMaskedLM
+from transformers import AutoTokenizer, AutoModelForCausalLM
 import math
+import re
+import requests
+
+
+
 
 class CalPerplexity:
     def __init__(self, text: str, host: str):
@@ -42,15 +47,15 @@ class CalPerplexity:
 
     def downloads_model(self):
         try:
-            model_name = 'cointegrated/rubert-tiny2'
+            model_name = 'ai-forever/rugpt3small_based_on_gpt2' # Разобраться, скачав на пк
 
             self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-            self.model = AutoModelForMaskedLM.from_pretrained(model_name)
+            self.model = AutoModelForCausalLM.from_pretrained(model_name)
             self.model.eval()
             print("[INFO] Модель успешно загружена")
             return True
-
         
+
         except:
             print("[ERROR] Ошибка скачивания модели")
             return False
@@ -64,21 +69,79 @@ class CalPerplexity:
             outputs = self.model(**inputs, labels=inputs['input_ids'])
             loss = outputs.loss
         self.result = math.exp(loss.item())
+
+
+
+
+
+
+class CheckingForOriginality:
+    def __init__(self, text: str):
+        self.text = text
+        self.link = 0
+        self.result = None
+
+
+        self.pattern = r'''(?xi)
+                    \b(?:
+                    https?://|
+                    www\.
+                            )
+                    [^\s<>"{}|\\^`\[\]]+
+                    (?<![.,;:!?])
+                    '''
+
+        """При возвращении списка подходящих элементов считаем количество"""
+        list_links = re.findall(self.pattern, self.text)
+
+
+        for link in list_links:
+            if self.ping_link(link.strip()):
+                self.link += 1
+        
+        if len(list_links) != 0 and self.link != 0:
+            self.result = (self.link * 100) / len(list_links)
+        
+        else:
+            return
+        
+        
     
+
+
+
+    def ping_link(self, link: str):
+
+        
+        try:
+            ping = requests.get(link, timeout = 2)
+            if 200 <= ping.status_code <= 300:
+                return True
+            return False
+    
+        except:
+            return False
+
+        
+
+
+
+
 
 
 
 if __name__ == "__main__":
       
-    # Пробный текст, сгенерированный ИИ
-    test_text = """В далеком-далеком прошлом, когда папоротники были выше современных деревьев, жил маленький динозаврик по имени Крош. Он был не страшным хищником с острыми клыками, а милым травоядным ящером с мягкой зеленой чешуей и смешными пятнышками на хвосте.
-Крош очень любил исследовать мир. Каждое утро он выбегал из уютной пещеры, щурился от яркого солнца и глубоко вдыхал воздух. Сегодня лес пах сладкими ягодами и влажной землей после дождя.
-— Я буду самым храбрым! — сказал сам себе Крош и громко рыкнул. Но вместо грозного рева получилось тихое: «Пых-пых!».
-Он не расстроился. Вместо того чтобы пугать других, Крош решил найти что-нибудь интересное. Он заглянул под большой лист и увидел светлячка, который потерял свой свет. Маленький динозаврик аккуратно подтолкнул жучка к цветку, где всегда горели теплые огоньки.
-Вечером, когда луна осветила джунгли, Крош вернулся к маме. Он был уставший, но счастливый. Мама обняла его своим длинным хвостом и спросила:
-— Что ты сегодня сделал важного?
-— Я помог другу, — прошептал Крош и уснул.
-Он понял, что быть маленьким динозавриком — это здорово. Можно прятаться в высокой траве, видеть мир снизу вверх и находить чудеса там, где большие динозавры просто проходят мимо."""
+    # Пробный текст, набранный рандомно вручную PPL~557
+    test_text = """рарарвтт тарпрпо опрповлвл рпрпоала рпрармтмт  привет как дела псяса кук опара"""
 
     a = CalPerplexity(test_text,"yandex.ru")
     print(a.result)
+
+
+    b = CheckingForOriginality(test_text)
+    if b.result == None:
+        print("[WARNING]В тексте отсутствуют ссылки")
+    
+    else:
+        print(f"Процент рабочих ссылок: {b.result}")
