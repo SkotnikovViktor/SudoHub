@@ -14,11 +14,9 @@ class App(ctk.CTk):
 
         # Использяем try except для того чтобы точно установить иконку приложению независимо от ОС
         try:
-            icon = Image.open("Assets/Images/ICO.ico")
+            self.iconbitmap("Assets/Images/ICO.ico")
         except:
-            icon = Image.open(r"Assets\Images\ICO.ico")
-        photo_icon = ImageTk.PhotoImage(icon)
-        self.iconphoto(False, photo_icon)
+            self.iconbitmap(r"Assets\Images\ICO.ico")
 
 
         #кнопка
@@ -42,7 +40,7 @@ class App(ctk.CTk):
         self.resultLabel = ctk.CTkLabel(master=self,
                                         height=28,
                                         width=313,
-                                        bg_color="#000000",
+                                        bg_color="#ffffff",
                                         text="Результат проверки",
                                         )
         #результат проверки
