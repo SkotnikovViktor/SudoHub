@@ -2,9 +2,9 @@ import customtkinter as ctk
 import os
 from PIL import Image
 from tkinterdnd2 import DND_FILES, TkinterDnD
-'''
-добавить поддержку word pdf
-'''
+import fitz # pdf
+import docx # word
+
 class App(ctk.CTk, TkinterDnD.DnDWrapper):
     def __init__(self):
         ctk.CTk.__init__(self)
@@ -29,9 +29,19 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
                                     height=81,
                                     corner_radius=10,
                                     fg_color="#59CF6A",
-                                    hover_color="#59CF6A",
+                                    hover_color="#7ade68",
                                     font = ("Arial", 30))
-                                    
+        #кнопка сохранить
+        self.buttonsave = ctk.CTkButton(master=self,
+                                        text="Сохранить результат\n в txt",
+                                        command= self.btn_save,
+                                        width=312,
+                                        height=81,
+                                        corner_radius=10,
+                                        fg_color="#9b46b8",
+                                        hover_color="#ba58db",
+                                        font=("Arial", 20)
+                                        )
         #то куда надо вводить
         self.check_entry = ctk.CTkTextbox(master=self,
                                         bg_color="#ffffff",
@@ -47,13 +57,14 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
                                         text="Результат проверки",
                                         )
         #результат проверки
-        self.resultLabel2 = ctk.CTkTextbox(master=self,
-                                         height=480,
-                                         width=313,
-                                         bg_color="#E7F3EF",
-                                         wrap="word",
-                                        state="disabled",
-                                         )
+        self.resultEntryText = ctk.CTkTextbox(master=self,
+                                              #height=480,
+                                              height=394,
+                                              width=313,
+                                              bg_color="#E7F3EF",
+                                              wrap="word",
+                                              state="disabled",
+                                              )
         '''Текст холдер(жесть)'''
         self.textholder = "Введите текст для проверки\nили перетащите файл сюда"
         self.check_entry.bind("<FocusIn>", self.deleteplaceholder)
@@ -81,26 +92,26 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         self.check_entry.place(x=16, y=50)
         self.resultLabel.place(x=358, y=50)
         self.button.place(x= 16, y=482)
-        self.resultLabel2.place(x=358, y=80)
-
+        self.resultEntryText.place(x=358, y=80)
+        self.buttonsave.place(x= 358, y=482)
 
         #рамка
         sepatator = ctk.CTkFrame(master=self, height=2, fg_color="black", width=313)
         sepatator.place(x=358, y=50+28)
 
     def check_btn_func(self):
-        self.resultLabel2.configure(state="normal")
-        self.resultLabel2.delete("1.0", "end")
-        self.resultLabel2.configure(state="disabled")
+        self.resultEntryText.configure(state="normal")
+        self.resultEntryText.delete("1.0", "end")
+        self.resultEntryText.configure(state="disabled")
         checktext = self.check_entry.get("1.0", "end").strip()
         if len(checktext) > 0 and checktext != self.textholder:
-            self.resultLabel2.configure(state="normal")
-            self.resultLabel2.insert("1.0", checktext) #поменять на функцию
-            self.resultLabel2.configure(state="disabled")
+            self.resultEntryText.configure(state="normal")
+            self.resultEntryText.insert("1.0", checktext) #поменять на функцию
+            self.resultEntryText.configure(state="disabled")
         else:
-            self.resultLabel2.configure(state="normal")
-            self.resultLabel2.insert("1.0", "Введите что-нибудь")
-            self.resultLabel2.configure(state="disabled")
+            self.resultEntryText.configure(state="normal")
+            self.resultEntryText.insert("1.0", "Введите что-нибудь")
+            self.resultEntryText.configure(state="disabled")
 
     def writeplaceholder(self, event=None):
         if self.check_entry.get("1.0", "end").strip() == "":
@@ -116,26 +127,47 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
 
 
     def drop_inside_textBox(self, event):
-        filepatch = event.data
-        extension = os.path.splitext(filepatch)[1].replace("{}", '').replace("{", '').replace("}", '')
+        filepatch = event.data.replace("{}", '').replace("{", '').replace("}", '')
+        extension = os.path.splitext(filepatch)[1]
         #print(extension)
         content = ''
         if extension == ".txt":
             file = open(filepatch, "r", encoding="utf-8")
-            for line in file:
-                content += line
-
+            try:
+                for line in file:
+                    content += line
+            except:
+                content = "Кодировка .txt не UTF-8"
+            file.close()
         elif extension == ".pdf":
-            print("pdf")
+            file = fitz.open(filepatch)
+            for page in file:
+                content += page.get_text()
+            file.close()
         elif extension == ".docx":
-            print("docx")
+            file = docx.Document(filepatch)
+            for paragraph in file.paragraphs:
+                content += paragraph.text
         else:
-            content = "Unknown filetype"
+            content = "Поддерживаемые типы: docx, txt, pdf"
 
         self.check_entry.delete("1.0", "end") # убрать текстхолдер
+        self.check_entry.configure(text_color="black") # текст черный
         self.label_fileimage.place_forget() # скрыть картинку файла
         self.check_entry.insert("1.0", content) # записать содержимое файла
 
+    def btn_save(self):
+        result = self.resultEntryText.get("1.0", "end")
+        file = open("result", "w", encoding="utf-8")
+        count = 0
+        for ch in result:
+            file.write(ch)
+            count += 1
+            if count >= 80 and ch == ' ':
+                file.write("\n")
+                count = 0
+
+        file.close()
 if __name__ == '__main__':
     app = App()
     app.mainloop()
