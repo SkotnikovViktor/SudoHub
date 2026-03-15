@@ -34,6 +34,7 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
                                     
         #то куда надо вводить
         self.check_entry = ctk.CTkTextbox(master=self,
+                                        bg_color="#ffffff",
                                         wrap = "word",
                                         width=312,
                                         height=394,
