@@ -13,12 +13,13 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         self.geometry("703x619") #размер окна
         self.title("SudoHub") # название окна
         self.resizable(False, False) # зиприт на измэнения
+        ctk.set_appearance_mode("light")
 
-        # Использяем try except для того чтобы точно установить иконку приложению независимо от ОС
+        #Использяем try except для того чтобы точно установить иконку приложению независимо от ОС
         try:
-            self.iconbitmap("Assets/Images/ICO.ico")
+           self.iconbitmap("Assets/Images/ICO.ico")
         except:
-            self.iconbitmap(r"Assets\Images\ICO.ico")
+           self.iconbitmap(r"Assets\Images\ICO.ico")
 
 
         #кнопка
