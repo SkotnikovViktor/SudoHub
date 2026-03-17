@@ -3,8 +3,10 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import math
 import re
-import requests
 from pathlib import Path
+import aiohttp
+import asyncio
+from typing import Optional
 
 
 
@@ -21,10 +23,10 @@ class CalPerplexity:
 
 
 
-        # Проверка подключения к интернету для скачивания моделей
+        
         if not self.MODEL_PATH.exists():
             if self.is_connect(self.host) == False:
-                print("[WARNING] Отсутствует подключение к интернету, загрузка моделей игнорируется.")
+                print("[WARNING] Модель не будет загружена, локальная отсутствует.")
                 return
         
             else:
@@ -53,7 +55,7 @@ class CalPerplexity:
     
 
 
-    def downloads_model(self): # Функция для скачивания модели, если её не существует
+    def downloads_model(self): # Функция для скачивания модели, если её нет
         try:
             model_name = 'ai-forever/rugpt3small_based_on_gpt2' 
 
@@ -107,52 +109,68 @@ class CalPerplexity:
 
 
 
-class CheckingForOriginality:
-    def __init__(self, text: str):
+
+
+
+
+class AsyncCheckingForOriginality:
+    URL_PATTERN = re.compile(r'''(?xi)
+        \b(?:https?://|www\.)
+        [^\s<>"{}|\\^`\[\]]+
+        (?<![.,;:!?])
+    ''', flags=re.VERBOSE)
+
+
+    
+    def __init__(self, text: str, timeout: float = 5.0, concurrency: int = 50):
         self.text = text
-        self.link = 0
-        self.result = None
-
-
-        self.pattern = r'''(?xi)
-                    \b(?:
-                    https?://|
-                    www\.
-                            )
-                    [^\s<>"{}|\\^`\[\]]+
-                    (?<![.,;:!?])
-                    '''
-
-        """При возвращении списка подходящих элементов считаем количество"""
-        list_links = re.findall(self.pattern, self.text)
-
-
-        for link in list_links:
-            if self.ping_link(link.strip()):
-                self.link += 1
-        
-        if len(list_links) != 0 and self.link != 0:
-            self.result = (self.link * 100) / len(list_links)
-        
-        else:
-            return
-        
-        
+        self.timeout = aiohttp.ClientTimeout(total=timeout)
+        self.concurrency = concurrency
+        self.result: Optional[float] = None
     
 
 
 
-    def ping_link(self, link: str):
 
-        
+    async def _ping_link(self, session: aiohttp.ClientSession, link: str) -> bool:
         try:
-            ping = requests.get(link)
-            if 200 <= ping.status_code <= 300:
-                return True
-            return False
-    
+            async with session.head(link, allow_redirects=True) as response:
+                return 200 <= response.status < 400
         except:
             return False
+    
+
+
+
+    async def _process(self):
+        links = list(set(
+            (l if l.startswith(('http://', 'https://')) else 'https://' + l).strip()
+            for l in self.URL_PATTERN.findall(self.text)))
+        if not links:
+            return
+        
+        connector = aiohttp.TCPConnector(limit=self.concurrency)
+        async with aiohttp.ClientSession(connector=connector, timeout=self.timeout) as session:
+            semaphore = asyncio.Semaphore(self.concurrency)
+            
+            async def bounded_ping(link):
+                async with semaphore:
+                    return await self._ping_link(session, link)
+            
+            tasks = [bounded_ping(link) for link in links]
+            results = await asyncio.gather(*tasks)
+            
+            valid = sum(results)
+            self.result = (valid * 100) / len(links) if links else None
+    
+
+
+
+    @classmethod
+    async def check(cls, text: str, **kwargs) -> Optional[float]:
+        instance = cls(text, **kwargs)
+        await instance._process()
+        return instance.result
 
         
 
@@ -164,16 +182,17 @@ class CheckingForOriginality:
 
 if __name__ == "__main__":
       
-    # Пробный текст, набранный рандомно вручную PPL~557
+    # Пробный текст, набранный рандомно вручную для проверки ссылок
     test_text = """https://chat.qwen.ai/c/61c002ef-5279-4873-a4dc-94114d565791 ропопропоп https://github.com/SkotnikovViktor/SudoHub/commit/5f10240a99c31bf3da00e804cf857dccc54939da аопопо https://githuy.com """
 
     a = CalPerplexity(test_text,"yandex.ru")
     print(a.result)
 
 
-    b = CheckingForOriginality(test_text)
-    if b.result == None:
-        print("[WARNING]В тексте отсутствуют ссылки")
+    result = asyncio.run(AsyncCheckingForOriginality.check(test_text, timeout=5, concurrency=30))
+
+    if result == None:
+        print("[INFO]В тексте отсутствуют ссылки")
     
     else:
-        print(f"Процент рабочих ссылок: {b.result}")
+        print(f"Процент рабочих ссылок: {round(result)} %")
