@@ -15,14 +15,7 @@ int* countSpacesBeforeEachDot(const char *text, int *dotCount) {
             dots++;
         }
     }
-
-    spaceCounts = (int*)malloc(dots * sizeof(int));
-    if (spaceCounts == NULL) {
-        printf("Ошибка выделения памяти!\n");
-        *dotCount = 0;
-        return NULL;
-    }
-
+ spaceCounts = (int*)malloc(dots * sizeof(int));
     // Второй проход: заполняем массив
     dots = 0;
     spaceCounter = 0;
@@ -40,18 +33,24 @@ int* countSpacesBeforeEachDot(const char *text, int *dotCount) {
     *dotCount = dots;
     return spaceCounts;
 }
-int shotchic(int dotCount,int *spaceCounts){
+int shotchic(int *spaceCounts,int dotCount){
     int shotchic=0;
     int i;
-    for (int i = 0; i < dotCount-1; i++) {
-            shotchic+=spaceCounts[i];
+    for (int i = 1; i < dotCount-2; i++) {
+            if (spaceCounts[i-1]-8 < spaceCounts [i] || spaceCounts [i] < spaceCounts[i-1]+8){
+            shotchic++;
+            }
         }
-    free(spaceCounts);
-    return shotchic/i;
+    return shotchic;
 }
 int main() {
     char text[] = "Это предложение с тремя пробелами до точки. Второе с двумя пробелами. Третье. Четвертое предложение с четырьмя пробелами до точки.";
     int dotCount;
+    int a;
     int *spaceCounts = countSpacesBeforeEachDot(text, &dotCount);
+    a=shotchic(spaceCounts,dotCount);
+    printf("%d\n%d",a,dotCount);
+    free(spaceCounts);
+
     return 0;
 }
