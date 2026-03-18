@@ -4,6 +4,7 @@ from PIL import Image
 from tkinterdnd2 import DND_FILES, TkinterDnD
 import fitz # pdf
 import docx # word
+import sys
 
 class App(ctk.CTk, TkinterDnD.DnDWrapper):
     def __init__(self):
@@ -17,9 +18,9 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
 
         #Использяем try except для того чтобы точно установить иконку приложению независимо от ОС
         try:
-           self.iconbitmap("Assets/Images/ICO.ico")
+           self.iconbitmap(self.resource_path("Assets/Images/ICO.ico"))
         except:
-           self.iconbitmap(r"Assets\Images\ICO.ico")
+           self.iconbitmap(self.resource_path(r"Assets\Images\ICO.ico"))
 
 
         #кнопка
@@ -79,7 +80,7 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
 
 
         '''картинка файлов'''
-        fileimage = Image.open("Assets/Images/file.png")
+        fileimage = Image.open(self.resource_path("Assets/Images/file.png"))
         self.icon_label = ctk.CTkImage(light_image=fileimage, dark_image=fileimage, size=(16, 16))
         self.label_fileimage = ctk.CTkLabel(master=self,
                                             image=self.icon_label,
@@ -169,6 +170,10 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
                 count = 0
 
         file.close()
+    def resource_path(self, relative_path):
+        if hasattr(sys, '_MEIPASS'):
+            return os.path.join(sys._MEIPASS, relative_path)
+        return os.path.join(os.path.abspath('.'), relative_path)
 if __name__ == '__main__':
     app = App()
     app.mainloop()
