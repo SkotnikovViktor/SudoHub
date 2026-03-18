@@ -1,20 +1,16 @@
 import sqlite3
 
 # Подключение к DataBase
-conn = sqlite3.connect('Learning.db')
+conn = sqlite3.connect('Main.db')
 cursor = conn.cursor()
 
 # Создание талицы
 cursor.execute('''
-CREATE TABLE Test_2 (
-    id INT PRIMARY KEY,
-    name TEXT NOT NULL,
-    age INT
+CREATE TABLE Words (
+    word TEXT NOT NULL,
+    count INT
 )
 ''')
-
-# Вставка данных
-cursor.execute("INSERT INTO Test_2 (id, name, age) VALUES (?, ?, ?)", (0, 'Михаил', 18))
 
 # Чтение данных
 cursor.execute("SELECT * FROM Test_2")
