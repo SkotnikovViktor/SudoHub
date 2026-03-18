@@ -13,7 +13,7 @@ CREATE TABLE Words (
 ''')
 
 # Чтение данных
-cursor.execute("CREATE TABLE Work AS SELECT * FROM Words")
+cursor.execute("CREATE TABLE Work AS SELECT * FROM Words ORDER BY count DESC")
 
 # Сохранение данных и закрытие соединения
 conn.commit()
