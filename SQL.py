@@ -13,12 +13,7 @@ CREATE TABLE Words (
 ''')
 
 # Чтение данных
-cursor.execute("SELECT * FROM Test_2")
-
-rows = cursor.fetchall()
-
-for row in rows:
-    print(row)
+cursor.execute("CREATE TABLE Work AS SELECT * FROM Words")
 
 # Сохранение данных и закрытие соединения
 conn.commit()
