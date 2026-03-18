@@ -5,13 +5,7 @@ conn = sqlite3.connect('Main.db')
 cursor = conn.cursor()
 
 # Создание талицы
-cursor.execute('''
-CREATE TABLE Work (
-    id INT PRIMARY KEY AUTOINCREMENT,
-    word TEXT NOT NULL,
-    count INT
-)
-''')
+cursor.execute("CREATE TABLE Work (id INT PRIMARY KEY AUTOINCREMENT, word TEXT NOT NULL, count INT)")
 
 # Чтение данных
 cursor.execute("INSERT INTO Work (word, count) SELECT * FROM Words ORDER BY count DESC;")
@@ -22,6 +16,8 @@ for i in range(cursor.fetchall()):
     inf = cursor.fetchall()
 
     Что-то делается
+
+cursor.execute("DROP TABLE Work")
 
 # Сохранение данных и закрытие соединения
 conn.commit()
