@@ -1,4 +1,4 @@
-#include"Alg.H"
+#include"Alg.h"
 #include <string.h> 
 #include <stdio.h>
 #include <string.h>
