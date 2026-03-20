@@ -4,8 +4,6 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 import math
 from pathlib import Path
 from typing import Optional
-import asyncio
-
 
 
 

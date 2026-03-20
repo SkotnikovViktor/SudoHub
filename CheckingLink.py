@@ -1,10 +1,9 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM
 import re
 from pathlib import Path
 import aiohttp
 import asyncio
 from typing import Optional
-import GUI
+
 
 
 class AsyncCheckingForOriginality:
@@ -84,6 +83,5 @@ def result_return(): #Функция, которая возвращает рез
 
     else:
         dict_result_check_link = {"link": result_check_link} # Словарь результата проверки ссылок
-    
     
     return dict_result_check_link
