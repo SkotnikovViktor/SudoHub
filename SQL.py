@@ -1,7 +1,7 @@
 import sqlite3
 
 # Подключение к DataBase
-conn = sqlite3.connect('Main.db')
+conn = sqlite3.connect('Data\Main.db')
 cursor = conn.cursor()
 
 # Создание талицы
@@ -15,7 +15,7 @@ for i in range(cursor.fetchall()):
     cursor.execute(f"SELECT word FROM Work WHERE id = {i+1};")
     inf = cursor.fetchall()
 
-    Что-то делается
+    #Что-то делается
 
 cursor.execute("DROP TABLE Work")
 
