@@ -5,3 +5,4 @@ Models/
 result.txt
 build/
 dist/
+__pycache__/
