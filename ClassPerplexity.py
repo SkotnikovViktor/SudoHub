@@ -4,7 +4,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 import math
 from pathlib import Path
 from typing import Optional
-import GUI 
+import asyncio
 
 
 
@@ -104,19 +104,12 @@ class CalPerplexity:
         self.result = math.exp(loss.item())
 
 
-if __name__ == "__main__":
+def result_return(): # Функция, которая возвращает результат работы класса в файл GUI
       
-    # Пробный текст, набранный рандомно вручную для проверки ссылок
-    test_text = """https://chat.qwen.ai/c/61c002ef-5279-4873-a4dc-94114d565791 ропопропоп https://github.com/SkotnikovViktor/SudoHub/commit/5f10240a99c31bf3da00e804cf857dccc54939da аопопо https://githuy.com """
+    with open("result.txt", encoding="UTF-8") as file:
+        text = file.read()
 
-    a = CalPerplexity(test_text,"yandex.ru")
-    print(a.result)
+    a = CalPerplexity(text,"yandex.ru")
+    dict_result_perplexity = {"perpl": a.result}
 
-
-    result = asyncio.run(AsyncCheckingForOriginality.check(test_text, timeout=5, concurrency=30))
-
-    if result == None:
-        print("[INFO]В тексте отсутствуют ссылки")
-    
-    else:
-        print(f"Процент рабочих ссылок: {round(result)} %")
+    return dict_result_perplexity

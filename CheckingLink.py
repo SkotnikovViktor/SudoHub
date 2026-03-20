@@ -68,19 +68,22 @@ class AsyncCheckingForOriginality:
     
 
 
-if __name__ == "__main__":
+
       
-    # Пробный текст, набранный рандомно вручную для проверки ссылок
-    test_text = """https://chat.qwen.ai/c/61c002ef-5279-4873-a4dc-94114d565791 ропопропоп https://github.com/SkotnikovViktor/SudoHub/commit/5f10240a99c31bf3da00e804cf857dccc54939da аопопо https://githuy.com """
+def result_return(): #Функция, которая возвращает результат работы класса в файл GUI
 
 
+    with open("result.txt", encoding="UTF-8") as file:
+        text = file.read()
 
 
-    result_check_link = asyncio.run(AsyncCheckingForOriginality.check(test_text, timeout=5, concurrency=30))
-    dict_result_check_link = {"link": result_check_link} # Словарь результата проверки ссылок
+    result_check_link = asyncio.run(AsyncCheckingForOriginality.check(text, timeout=5, concurrency=30))
 
     if result_check_link == None:
-        print("[INFO]В тексте отсутствуют ссылки")
-    
+        dict_result_check_link = {"link": "В тексте ссылки отсутствуют"} # Словарь о том, что ссылок нет 
+
     else:
-        print(f"Процент рабочих ссылок: {round(result_check_link)} %")
+        dict_result_check_link = {"link": result_check_link} # Словарь результата проверки ссылок
+    
+    
+    return dict_result_check_link
