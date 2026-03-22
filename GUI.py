@@ -8,6 +8,8 @@ import fitz # pdf
 import docx # word
 import sys
 from tkinter import messagebox
+from tkinter import filedialog
+
 #Функции локальные
 from ClassPerplexity import result_return
 
@@ -204,16 +206,19 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
 
     def btn_save(self):
         result = self.resultEntryText.get("1.0", "end")
-        file = open("result.txt", "w", encoding="utf-8")
-        count = 0
-        for ch in result:
-            file.write(ch)
-            count += 1
-            if count >= 80 and ch == ' ':
-                file.write("\n")
-                count = 0
-        messagebox.showinfo("Файл сохранен", "Директория файла " + os.path.abspath("result.txt"))
-        file.close()
+        file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text File", ".txt")])
+        if file_path == True:
+            file = open(file_path, "w", encoding="utf-8")
+            count = 0
+            for ch in result:
+                file.write(ch)
+                count += 1
+                if count >= 80 and ch == ' ':
+                    file.write("\n")
+                    count = 0
+            messagebox.showinfo("Файл сохранен", "Директория файла " + os.path.abspath(file_path))
+            file.close()
+
     def resource_path(self, relative_path): #Для компиляции
         if hasattr(sys, '_MEIPASS'):
             return os.path.join(sys._MEIPASS, relative_path)
