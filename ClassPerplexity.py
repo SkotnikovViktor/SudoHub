@@ -102,10 +102,10 @@ class CalPerplexity:
         self.result = math.exp(loss.item())
 
 
-def result_return(): # Функция, которая возвращает результат работы класса в файл GUI
+def result_return(text): # Функция, которая возвращает результат работы класса в файл GUI
       
-    with open("result.txt", encoding="UTF-8") as file:
-        text = file.read()
+    #with open("result.txt", encoding="UTF-8") as file:
+     #   text = file.read()
 
     a = CalPerplexity(text,"yandex.ru")
     dict_result_perplexity = {"perpl": a.result}

@@ -1,3 +1,6 @@
+import threading
+import time
+
 import customtkinter as ctk
 import os
 from PIL import Image
@@ -6,16 +9,19 @@ import fitz # pdf
 import docx # word
 import sys
 
+#Функции локальные
+from ClassPerplexity import result_return
+
 class App(ctk.CTk, TkinterDnD.DnDWrapper):
     def __init__(self):
         ctk.CTk.__init__(self)
         self.TkdndVersion = TkinterDnD._require(self) # это типа регистрация чтобы self. и там были функции drop
-        self.configure(fg_color='#3E304D')# фон окна
+        self.configure(fg_color='#4A4563')# фон окна
         self.geometry("703x619") #размер окна
         self.title("SudoHub") # название окна
         self.resizable(False, False) # зиприт на измэнения
         ctk.set_appearance_mode("light")
-
+        self.isloading = False
         #Использяем try except для того чтобы точно установить иконку приложению независимо от ОС
         try:
            self.iconbitmap(self.resource_path("Assets/Images/ICO.ico"))
@@ -32,7 +38,8 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
                                     corner_radius=10,
                                     fg_color="#59CF6A",
                                     hover_color="#7ade68",
-                                    font = ("Arial", 30))
+                                    font = ("Arial", 30),
+                                    text_color_disabled="#ffffff",)
         #кнопка сохранить
         self.buttonsave = ctk.CTkButton(master=self,
                                         text="Сохранить результат\n в txt",
@@ -42,14 +49,15 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
                                         corner_radius=10,
                                         fg_color="#9b46b8",
                                         hover_color="#ba58db",
-                                        font=("Arial", 20)
+                                        font=("Arial", 20),
+                                        state="disabled",
                                         )
         #то куда надо вводить
         self.check_entry = ctk.CTkTextbox(master=self,
                                         bg_color="#ffffff",
                                         wrap = "word",
                                         width=312,
-                                        height=394,
+                                        height=422,
                                         )
         #текст просто
         self.resultLabel = ctk.CTkLabel(master=self,
@@ -105,15 +113,51 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         self.resultEntryText.configure(state="normal")
         self.resultEntryText.delete("1.0", "end")
         self.resultEntryText.configure(state="disabled")
-        checktext = self.check_entry.get("1.0", "end").strip()
-        if len(checktext) > 0 and checktext != self.textholder:
-            self.resultEntryText.configure(state="normal")
-            self.resultEntryText.insert("1.0", checktext) #поменять на функцию
-            self.resultEntryText.configure(state="disabled")
+        self.checktext = self.check_entry.get("1.0", "end").strip()
+        if len(self.checktext) > 0 and self.checktext != self.textholder:
+            self.isloading = True
+            self.button.configure(state="disabled", fg_color="#59CF6A")
+            self.buttonsave.configure(state="disabled")
+            loadingThread = threading.Thread(target=self.loadingBtn, daemon=True)
+            loadingThread.start()
+            thread = threading.Thread(target=self.loadFunctions, daemon=True)
+            thread.start()
+
         else:
             self.resultEntryText.configure(state="normal")
             self.resultEntryText.insert("1.0", "Введите что-нибудь")
             self.resultEntryText.configure(state="disabled")
+
+    def loadingBtn(self):
+        texts = ["Загрузка...", "Загрузка..", "Загрузка."]
+        i = 0
+        while self.isloading == True:
+            self.button.configure(text=texts[i])
+            i += 1
+            if i >= 3:
+                i = 0
+            time.sleep(0.5)
+
+    def loadFunctions(self):
+        result = self.Functions(self.checktext)
+        self.after(0, self.FunctionsComplite, result) #Главный поток
+
+    def FunctionsComplite(self, result):
+        self.isloading = False
+        self.button.configure(text="Проверить", state="normal")
+        self.resultEntryText.configure(state="normal")
+        self.resultEntryText.delete("1.0", "end")
+        self.resultEntryText.insert("1.0", result)
+        self.resultEntryText.configure(state="disabled")
+        self.buttonsave.configure(state="normal")
+
+    def Functions(self, checktext):
+        #time.sleep(20)
+        result1 = result_return(checktext)
+        result = "ПЕРПЛЕКСНОСТЬ " + str(result1.get("perpl"))
+        '''Потом логика для других функций'''
+        return result
+
 
     def writeplaceholder(self, event=None):
         if self.check_entry.get("1.0", "end").strip() == "":
@@ -160,7 +204,7 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
 
     def btn_save(self):
         result = self.resultEntryText.get("1.0", "end")
-        file = open("result", "w", encoding="utf-8")
+        file = open("result.txt", "w", encoding="utf-8")
         count = 0
         for ch in result:
             file.write(ch)
@@ -168,12 +212,13 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
             if count >= 80 and ch == ' ':
                 file.write("\n")
                 count = 0
-
         file.close()
-    def resource_path(self, relative_path):
+    def resource_path(self, relative_path): #Для компиляции
         if hasattr(sys, '_MEIPASS'):
             return os.path.join(sys._MEIPASS, relative_path)
         return os.path.join(os.path.abspath('.'), relative_path)
+
+
 if __name__ == '__main__':
     app = App()
     app.mainloop()
