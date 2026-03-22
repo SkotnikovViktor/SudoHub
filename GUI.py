@@ -1,6 +1,5 @@
 import threading
 import time
-
 import customtkinter as ctk
 import os
 from PIL import Image
@@ -8,7 +7,7 @@ from tkinterdnd2 import DND_FILES, TkinterDnD
 import fitz # pdf
 import docx # word
 import sys
-
+from tkinter import messagebox
 #Функции локальные
 from ClassPerplexity import result_return
 
@@ -213,6 +212,7 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
             if count >= 80 and ch == ' ':
                 file.write("\n")
                 count = 0
+        messagebox.showinfo("Файл сохранен", "Директория файла " + os.path.abspath("result.txt"))
         file.close()
     def resource_path(self, relative_path): #Для компиляции
         if hasattr(sys, '_MEIPASS'):
