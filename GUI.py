@@ -207,7 +207,7 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
     def btn_save(self):
         result = self.resultEntryText.get("1.0", "end")
         file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text File", ".txt")])
-        if file_path == True:
+        if file_path:
             file = open(file_path, "w", encoding="utf-8")
             count = 0
             for ch in result:
