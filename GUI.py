@@ -140,7 +140,8 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
 
     def loadFunctions(self):
         result = self.Functions(self.checktext)
-        self.after(0, self.FunctionsComplite, result) #Главный поток
+        #self.after(0, self.FunctionsComplite, result) #Главный поток
+        self.FunctionsComplite(result)
 
     def FunctionsComplite(self, result):
         self.isloading = False
