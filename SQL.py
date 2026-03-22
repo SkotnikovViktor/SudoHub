@@ -8,14 +8,18 @@ cursor = conn.cursor()
 cursor.execute("CREATE TABLE Work (id INT PRIMARY KEY AUTOINCREMENT, word TEXT NOT NULL, count INT)")
 
 # Чтение данных
-cursor.execute("INSERT INTO Work (word, count) SELECT * FROM Words ORDER BY count DESC;")
+cursor.execute("INSERT INTO Work (word) SELECT * FROM Words ORDER BY count DESC;")
 cursor.execute("SELECT COUNT(*) FROM Work")
 
 for i in range(cursor.fetchall()):
     cursor.execute(f"SELECT word FROM Work WHERE id = {i+1};")
-    inf = cursor.fetchall()
+    word = cursor.fetchall()[0]
 
-    #Что-то делается
+    count = vasily_program(word)
+
+    curosr.execute(f"UPDATE Work SET count = {count} WHERE id = {i+1};")
+
+# Что сделать с количеством надо?
 
 cursor.execute("DROP TABLE Work")
 
