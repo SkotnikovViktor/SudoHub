@@ -69,19 +69,14 @@ class AsyncCheckingForOriginality:
 
 
       
-def result_return(): #Функция, которая возвращает результат работы класса в файл GUI
-
-
-    with open("result.txt", encoding="UTF-8") as file:
-        text = file.read()
+def result_return(text): #Функция, которая возвращает результат работы класса в файл GUI
 
 
     result_check_link = asyncio.run(AsyncCheckingForOriginality.check(text, timeout=5, concurrency=30))
-
     if result_check_link == None:
         dict_result_check_link = {"link": "В тексте ссылки отсутствуют"} # Словарь о том, что ссылок нет 
 
     else:
-        dict_result_check_link = {"link": result_check_link} # Словарь результата проверки ссылок
+        dict_result_check_link = {"link": round(result_check_link, 1)} # Словарь результата проверки ссылок
     
     return dict_result_check_link

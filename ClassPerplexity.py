@@ -104,10 +104,7 @@ class CalPerplexity:
 
 def result_return(text): # Функция, которая возвращает результат работы класса в файл GUI
       
-    #with open("result.txt", encoding="UTF-8") as file:
-     #   text = file.read()
-
     a = CalPerplexity(text,"yandex.ru")
-    dict_result_perplexity = {"perpl": a.result}
+    dict_result_perplexity = {"perpl": round(a.result, 1)}
 
     return dict_result_perplexity
