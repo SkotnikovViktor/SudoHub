@@ -25,9 +25,9 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         self.isloading = False
         #Использяем try except для того чтобы точно установить иконку приложению независимо от ОС
         try:
-           self.iconbitmap(self.resource_path("Assets/Images/ICO.ico"))
+            self.iconbitmap(self.resource_path("Assets/Images/ICO.ico"))
         except:
-           self.iconbitmap(self.resource_path(r"Assets\Images\ICO.ico"))
+            self.iconbitmap(self.resource_path(r"Assets\Images\ICO.ico"))
 
 
         #кнопка
@@ -156,7 +156,7 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
     def Functions(self, checktext):
         #time.sleep(20)
         result1 = result_return(checktext)
-        result = "ПЕРПЛЕКСНОСТЬ " + str(result1.get("perpl"))
+        result = "Перплексность - " + str(result1.get("perpl"))
         '''Потом логика для других функций'''
         return result
 
