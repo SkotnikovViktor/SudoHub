@@ -4,6 +4,9 @@ import sqlite3
 conn = sqlite3.connect('Data\Main.db')
 cursor = conn.cursor()
 
+# Удаление прошлой таблицы
+cursor.execute("DROP IF EXIST TABLE Work")
+
 # Создание талицы
 cursor.execute("CREATE TABLE IF NOT EXISTS Work (word TEXT NOT NULL, count INT);")
 
@@ -22,8 +25,6 @@ for i in range(len(words)):
     cursor.execute(f"UPDATE Work SET count = {count} WHERE word = {word};")
 
 # Что сделать с количеством надо?
-
-cursor.execute("DROP IF EXIST TABLE Work")
 
 # Сохранение данных и закрытие соединения
 conn.commit()
