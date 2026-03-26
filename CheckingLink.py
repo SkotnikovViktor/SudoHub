@@ -69,7 +69,7 @@ class AsyncCheckingForOriginality:
 
 
       
-def result_return(text): #Функция, которая возвращает результат работы класса в файл GUI
+def result_returnCheckingLink(text): #Функция, которая возвращает результат работы класса в файл GUI
 
 
     result_check_link = asyncio.run(AsyncCheckingForOriginality.check(text, timeout=5, concurrency=30))

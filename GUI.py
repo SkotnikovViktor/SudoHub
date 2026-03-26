@@ -11,8 +11,8 @@ from tkinter import messagebox
 from tkinter import filedialog
 
 #Функции локальные
-from ClassPerplexity import result_return
-
+from ClassPerplexity import result_returnClassPerplexity
+from CheckingLink import result_returnCheckingLink
 class App(ctk.CTk, TkinterDnD.DnDWrapper):
     def __init__(self):
         ctk.CTk.__init__(self)
@@ -155,8 +155,10 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
 
     def Functions(self, checktext):
         #time.sleep(20)
-        result1 = result_return(checktext)
-        result = "Перплексность - " + str(result1.get("perpl"))
+        resultPerlexity = result_returnClassPerplexity(checktext)
+        resultCheckingLink = result_returnCheckingLink(checktext)
+        result = "Перплексность - " + str(resultPerlexity.get("perpl")) +"\n" + "Проверка ссылок - " + str(resultCheckingLink.get("link"))
+
         '''Потом логика для других функций'''
         return result
 

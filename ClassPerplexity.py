@@ -102,7 +102,7 @@ class CalPerplexity:
         self.result = math.exp(loss.item())
 
 
-def result_return(text): # Функция, которая возвращает результат работы класса в файл GUI
+def result_returnClassPerplexity(text): # Функция, которая возвращает результат работы класса в файл GUI
       
     a = CalPerplexity(text,"yandex.ru")
     dict_result_perplexity = {"perpl": round(a.result, 1)}
