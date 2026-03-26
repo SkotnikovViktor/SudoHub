@@ -1,7 +1,7 @@
 import sqlite3
 
 # Подключение к DataBase
-conn = sqlite3.connect('Data\Main.db')
+conn = sqlite3.connect('Data/Main.db')
 cursor = conn.cursor()
 
 # Удаление прошлой таблицы
