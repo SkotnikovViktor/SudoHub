@@ -5,23 +5,25 @@ conn = sqlite3.connect('Data\Main.db')
 cursor = conn.cursor()
 
 # Создание талицы
-cursor.execute("CREATE TABLE Work (id INT PRIMARY KEY AUTOINCREMENT, word TEXT NOT NULL, count INT)")
+cursor.execute("CREATE TABLE IF NOT EXISTS Work (word TEXT NOT NULL, count INT);")
 
 # Чтение данных
-cursor.execute("INSERT INTO Work (word) SELECT * FROM Words ORDER BY count DESC;")
-cursor.execute("SELECT COUNT(*) FROM Work")
+cursor.execute("INSERT INTO Work (word) SELECT * FROM Words;")
+cursor.execute("SELECT word FROM Work")
 
-for i in range(cursor.fetchall()):
-    cursor.execute(f"SELECT word FROM Work WHERE id = {i+1};")
-    word = cursor.fetchall()[0]
+words = cursor.fetchall()
+
+for i in range(len(words)):
+    
+    word = words[i][0]
 
     count = vasily_program(word)
 
-    curosr.execute(f"UPDATE Work SET count = {count} WHERE id = {i+1};")
+    cursor.execute(f"UPDATE Work SET count = {count} WHERE word = {word};")
 
 # Что сделать с количеством надо?
 
-cursor.execute("DROP TABLE Work")
+cursor.execute("DROP IF EXIST TABLE Work")
 
 # Сохранение данных и закрытие соединения
 conn.commit()
