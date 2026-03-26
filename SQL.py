@@ -5,7 +5,7 @@ conn = sqlite3.connect('Data/Main.db')
 cursor = conn.cursor()
 
 # Удаление прошлой таблицы
-cursor.execute("DROP IF EXIST TABLE Work")
+cursor.execute("DROP TABLE IF EXISTS Work")
 
 # Создание талицы
 cursor.execute("CREATE TABLE IF NOT EXISTS Work (word TEXT NOT NULL, count INT);")
