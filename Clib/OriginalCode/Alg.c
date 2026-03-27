@@ -1,5 +1,5 @@
 #include"Alg.h"
-#include <string.h> 
+#include <string.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -30,7 +30,7 @@ int Knut_Morris_Pratta(char *obraz, char *str) {
     if (m == 0) return 0;  // Пустой образец
 
     int pi[m];
-    compute_prefix_function(obraz, pi, m); 
+    compute_prefix_function(obraz, pi, m);
 
     int counter = 0;
     int j = 0;  // текущая позиция в образце
