@@ -5,15 +5,11 @@ def search (text):
     conn = sqlite3.connect('Data/Main.db')
     cursor = conn.cursor()
     
-    # Удаление прошлой таблицы
-    cursor.execute("DROP TABLE IF EXISTS Work")
-    
-    # Создание талицы
-    cursor.execute("CREATE TABLE IF NOT EXISTS Work (word TEXT NOT NULL, count INT);")
+    # Удаление прошлых данных
+    cursor.execute("UPDATE Words SET count = 0")
     
     # Чтение данных
-    cursor.execute("INSERT INTO Work (word) SELECT * FROM Words;")
-    cursor.execute("SELECT word FROM Work")
+    cursor.execute("SELECT word FROM Words")
     
     words = cursor.fetchall()
     
@@ -23,9 +19,9 @@ def search (text):
     
         count = alg_wrapper.knut_morris_pratta(word, text)
     
-        cursor.execute(f"UPDATE Work SET count = {count} WHERE word = {word};")
+        cursor.execute(f"UPDATE Words SET count = {count} WHERE word = {word};")
     
-    result = cursor.execute("SELECT * FROM Work")
+    result = cursor.execute("SELECT * FROM Words")
 
     for i in range(len(result)):
         print(f"{i[0]}:{i[1]}")
