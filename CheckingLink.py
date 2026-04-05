@@ -1,82 +1,90 @@
+import requests
 import re
-from pathlib import Path
-import aiohttp
 import asyncio
-from typing import Optional
 
+class CheckingLink:
 
-
-class AsyncCheckingForOriginality:
     URL_PATTERN = re.compile(r'''(?xi)
-        \b(?:https?://|www\.)
-        [^\s<>"{}|\\^`\[\]]+
-        (?<![.,;:!?])
-    ''', flags=re.VERBOSE)
+    \b(?:https?://|www\.)
+    [^\s<>"{}|\\^`\[\]]+
+    (?<![.,;:!?])
+    ''', flags=re.VERBOSE) # Создание паттерна для поиска ссылок
 
-
-    
-    def __init__(self, text: str, timeout: float = 5.0, concurrency: int = 50):
+    def __init__(self, text: str, timeout = 10) -> None:
         self.text = text
-        self.timeout = aiohttp.ClientTimeout(total=timeout)
-        self.concurrency = concurrency
-        self.result: Optional[float] = None
-    
-
-
-
-
-    async def _ping_link(self, session: aiohttp.ClientSession, link: str) -> bool:
-        try:
-            async with session.head(link, allow_redirects=True) as response:
-                return 200 <= response.status < 400
-        except:
-            return False
-    
-
-
-
-    async def _process(self):
-        links = list(set(
-            (l if l.startswith(('http://', 'https://')) else 'https://' + l).strip()
-            for l in self.URL_PATTERN.findall(self.text)))
-        if not links:
-            return
+        self.result = None
+        self.timeout = timeout
+        self.list_link = re.findall(self.URL_PATTERN, self.text)
+        self.count_work_link = 0
+        asyncio.run(self.__function_count_procent_work_link())
         
-        connector = aiohttp.TCPConnector(limit=self.concurrency)
-        async with aiohttp.ClientSession(connector=connector, timeout=self.timeout) as session:
-            semaphore = asyncio.Semaphore(self.concurrency)
-            
-            async def bounded_ping(link):
-                async with semaphore:
-                    return await self._ping_link(session, link)
-            
-            tasks = [bounded_ping(link) for link in links]
-            results = await asyncio.gather(*tasks)
-            
-            valid = sum(results)
-            self.result = (valid * 100) / len(links) if links else None
-    
-
-
-
-    @classmethod
-    async def check(cls, text: str, **kwargs) -> Optional[float]:
-        instance = cls(text, **kwargs)
-        await instance._process()
-        return instance.result
-    
-
-
-
       
-def result_returnCheckingLink(text): #Функция, которая возвращает результат работы класса в файл GUI
 
 
-    result_check_link = asyncio.run(AsyncCheckingForOriginality.check(text, timeout=5, concurrency=30))
-    if result_check_link == None:
-        dict_result_check_link = {"link": "В тексте ссылки отсутствуют"} # Словарь о том, что ссылок нет 
 
-    else:
-        dict_result_check_link = {"link": round(result_check_link, 1)} # Словарь результата проверки ссылок
+
+    async def __function_check_link(self, url: str) -> bool | Exception:
+        try:
+            respone = requests.head(url = url, timeout = self.timeout, allow_redirects = True) # Отправляем HEAD запрос
+
+            if respone.status_code == 405: # Если сайт блокирует HEAD запрос, отправляем GET
+                respone = requests.get(url = url, timeout = self.timeout, allow_redirects = True) # Отправляем GET запрос
+
+            
+            if respone.status_code == 200 or 300 <= respone.status_code < 400:
+                return True # Ссылка рабочая
+
+            else:
+                return False
+            
+        except requests.exceptions.RequestException as error_check_link:
+            return error_check_link    
+
+
+
+
+    async def __function_count_procent_work_link(self):
+
+        if len(self.list_link) == 0:
+            self.result = "В тексте нет ссылок"
+
+        else:    
+            for link in self.list_link:
+
+                result = await self.__function_check_link(link)
+                if  result == True:
+                    self.count_work_link += 1
+                
+                elif isinstance(result, requests.exceptions.RequestException):
+                    continue
+        
+
+        try: # Проверка переменной рабочих ссылок на не 0
+            self.result = (self.count_work_link * 100) / len(self.list_link) 
+        except ZeroDivisionError: # Если переменная 0, то без подсчёта присваевыем 0
+            self.result = 0 
     
-    return dict_result_check_link
+
+
+    def getter(self):
+        return self.result # Геттер возвращает результат количество рабочих ссылок
+    
+
+
+
+
+
+#res = CheckingLink("https://lordserialzinc.lol/82-vstat-na-nogi-u62k.html fdjgf https://lordserialin.ol/82-vstat-na-nogi-u62k.html", 10)
+#print(res.getter())
+
+
+"""Как работать с классом? Во-первых нужно создать объект класс как в 77 строчке, название можно выбрать любое.
+Во-вторых, из ранее созданого объекта нужно вызвать функцию getter() как в 78 строчке и сохранить в переменную результат проверки"""
+
+
+    
+
+
+
+
+
