@@ -2,7 +2,7 @@ import requests
 import re
 import asyncio
 
-class CheckingLink:
+class ClassCheckingLink:
 
     URL_PATTERN = re.compile(r'''(?xi)
     \b(?:https?://|www\.)
@@ -19,8 +19,6 @@ class CheckingLink:
         asyncio.run(self.__function_count_procent_work_link())
         
       
-
-
 
 
     async def __function_check_link(self, url: str) -> bool | Exception:
@@ -78,7 +76,7 @@ class CheckingLink:
 #print(res.getter())
 
 
-"""Как работать с классом? Во-первых нужно создать объект класс как в 77 строчке, название можно выбрать любое.
+"""Как работать с классом? Во-первых нужно создать объект класса как в 77 строчке, название можно выбрать любое.
 Во-вторых, из ранее созданого объекта нужно вызвать функцию getter() как в 78 строчке и сохранить в переменную результат проверки"""
 
 
