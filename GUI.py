@@ -12,8 +12,9 @@ from tkinter import filedialog
 
 #Функции локальные
 from ClassPerplexity import result_returnClassPerplexity
-from CheckingLink import result_returnCheckingLink
+from CheckingLink import ClassCheckingLink
 from Clib.ToolsForCompile.main import resultSpacesAndCount
+
 
 class App(ctk.CTk, TkinterDnD.DnDWrapper):
     def __init__(self):
@@ -158,9 +159,9 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
     def Functions(self, checktext):
         #time.sleep(20)
         resultPerlexity = result_returnClassPerplexity(checktext)
-        resultCheckingLink = result_returnCheckingLink(checktext)
+        resultCheckingLink = ClassCheckingLink(checktext, timeout = 5)
         resultspacesandcount = resultSpacesAndCount(checktext)
-        result = "Перплексность - " + str(resultPerlexity.get("perpl")) +"\n" + "Проверка ссылок - " + str(resultCheckingLink.get("link") + "\n" + str(resultspacesandcount))
+        result = "Перплексность - " + str(resultPerlexity.get("perpl")) +"\n" + "Проверка ссылок - " + str(resultCheckingLink.getter() + "\n" + str(resultspacesandcount))
 
         '''Потом логика для других функций'''
         return result
