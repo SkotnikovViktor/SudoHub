@@ -173,10 +173,10 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         #resultspacesandcount = resultSpacesAndCount(checktext)
         resultCheckSecondName = CheckSecondName(checktext).getter()
         print("chcek secondname")
-        result = "Перплексность - " + str(resultPerlexity.get("perpl")) +"\n\n" + "Проверка ссылок - " \
+        result = "Перплексность: " + str(resultPerlexity.get("perpl")) +"\n\n" + "Проверка ссылок : " \
                  + str(resultCheckingLink.getter()) + \
                  "\n\n" + "Процент верифицированных имен " + str(resultCheckSecondName.get("procent")) + "\n\n" + "Верефицированные имена "+ str(resultCheckSecondName.get("veriefy_name")).replace('[', '').replace(']', '    ').replace("\n", ", ")\
-                 + "\n\n"+"Неверифицированные имена " +  str(resultCheckSecondName.get("not_variefy_name")).replace('[', '').replace(']', '    ').replace("\n\n", ", ") + "\n\n"
+                 + "\n\n"+"Неверифицированные имена " +  str(resultCheckSecondName.get("not_variefy_name")).replace('[', '').replace(']', '    ').replace("\n", ", ") + "\n\n"
         #result += str(resultspacesandcount)
 
         return result
