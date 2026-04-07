@@ -13,7 +13,8 @@ from tkinter import filedialog
 #Функции локальные
 from ClassPerplexity import result_returnClassPerplexity
 from CheckingLink import ClassCheckingLink
-from Clib.ToolsForCompile.main import resultSpacesAndCount
+#from Clib.ToolsForCompile.main import resultSpacesAndCount
+from ClassCheckSecondName import CheckSecondName
 
 
 class App(ctk.CTk, TkinterDnD.DnDWrapper):
@@ -79,6 +80,12 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
                                               wrap="word",
                                               state="disabled",
                                               )
+        #авторы
+        self.authorsText = ctk.CTkLabel(master=self,
+                                        text="Vladislav, Victor, Wasiliy, Michael",
+                                        fg_color="#4A4563",
+                                        font=("Arial", 16, "normal")
+                                        )
         '''Текст холдер(жесть)'''
         self.textholder = "Введите текст для проверки\nили перетащите файл сюда"
         self.check_entry.bind("<FocusIn>", self.deleteplaceholder)
@@ -108,6 +115,7 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         self.button.place(x= 16, y=482)
         self.resultEntryText.place(x=358, y=80)
         self.buttonsave.place(x= 358, y=482)
+        self.authorsText.place(x=240, y=580)
 
         #рамка
         sepatator = ctk.CTkFrame(master=self, height=2, fg_color="black", width=313)
@@ -159,11 +167,18 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
     def Functions(self, checktext):
         #time.sleep(20)
         resultPerlexity = result_returnClassPerplexity(checktext)
+        print("perp")
         resultCheckingLink = ClassCheckingLink(checktext, timeout = 5)
-        resultspacesandcount = resultSpacesAndCount(checktext)
-        result = "Перплексность - " + str(resultPerlexity.get("perpl")) +"\n" + "Проверка ссылок - " + str(resultCheckingLink.getter() + "\n" + str(resultspacesandcount))
+        print("checklink")
+        #resultspacesandcount = resultSpacesAndCount(checktext)
+        resultCheckSecondName = CheckSecondName(checktext).getter()
+        print("chcek secondname")
+        result = "Перплексность - " + str(resultPerlexity.get("perpl")) +"\n\n" + "Проверка ссылок - " \
+                 + str(resultCheckingLink.getter()) + \
+                 "\n\n" + "Процент верифицированных имен " + str(resultCheckSecondName.get("procent")) + "\n\n" + "Верефицированные имена "+ str(resultCheckSecondName.get("veriefy_name")).replace('[', '').replace(']', '    ').replace("\n", ", ")\
+                 + "\n\n"+"Неверифицированные имена " +  str(resultCheckSecondName.get("not_variefy_name")).replace('[', '').replace(']', '    ').replace("\n\n", ", ") + "\n\n"
+        #result += str(resultspacesandcount)
 
-        '''Потом логика для других функций'''
         return result
 
 
