@@ -2,6 +2,7 @@ import threading
 import time
 import customtkinter as ctk
 import os
+import threading
 from PIL import Image
 from tkinterdnd2 import DND_FILES, TkinterDnD
 import fitz # pdf
@@ -10,12 +11,16 @@ import sys
 from tkinter import messagebox
 from tkinter import filedialog
 
+
 #Функции локальные
-from ClassPerplexity import result_returnClassPerplexity
+from ClassPerplexity import result_returnClassPerplexity, CalPerplexity
 from CheckingLink import ClassCheckingLink
 #from Clib.ToolsForCompile.main import resultSpacesAndCount
 from ClassCheckSecondName import CheckSecondName
 
+# Начинаем скачивать модель до запуска интерфейса в отдельном потоке
+download_model_in__different_thread = threading.Thread(target = CalPerplexity, args = ("ForDownload","yandex.ru","-m"))
+download_model_in__different_thread.start()
 
 class App(ctk.CTk, TkinterDnD.DnDWrapper):
     def __init__(self):
@@ -141,7 +146,7 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
             self.resultEntryText.configure(state="disabled")
 
     def loadingBtn(self):
-        texts = ["Загрузка...", "Загрузка..", "Загрузка."]
+        texts = ["Загрузка.", "Загрузка..", "Загрузка..."]
         i = 0
         while self.isloading == True:
             self.button.configure(text=texts[i])
@@ -168,8 +173,8 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         #time.sleep(20)
         resultPerlexity = result_returnClassPerplexity(checktext)
         print("perp")
-        resultCheckingLink = ClassCheckingLink(checktext, timeout = 5)
-        print("checklink")
+        resultCheckingLink = ClassCheckingLink(checktext, 3)
+        print("Проверка ссылок")
         #resultspacesandcount = resultSpacesAndCount(checktext)
         resultCheckSecondName = CheckSecondName(checktext).getter()
         print("chcek secondname")

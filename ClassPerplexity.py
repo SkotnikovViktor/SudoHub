@@ -11,12 +11,16 @@ class CalPerplexity:
     MODEL_PATH = Path("Models/ai-forever/rugpt3small_based_on_gpt2") # Путь до локальной модели
 
 
-    def __init__(self, text: str, host: str):
+    def __init__(self, text: str, host: str, key_status: str):
         self.text = text
         self.host = host
         self.tokenizer = None
         self.model = None
         self.result = None
+        self.key_status = key_status
+
+        if self.key_status == "-m":
+            self.downloads_model()
 
 
 
@@ -104,7 +108,7 @@ class CalPerplexity:
 
 def result_returnClassPerplexity(text): # Функция, которая возвращает результат работы класса в файл GUI
       
-    a = CalPerplexity(text,"yandex.ru")
+    a = CalPerplexity(text,"yandex.ru", "-f")
     dict_result_perplexity = {"perpl": round(a.result, 1)}
 
     return dict_result_perplexity
