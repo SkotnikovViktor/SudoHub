@@ -2,7 +2,6 @@ import threading
 import time
 import customtkinter as ctk
 import os
-import threading
 from PIL import Image
 from tkinterdnd2 import DND_FILES, TkinterDnD
 import fitz # pdf
@@ -11,16 +10,13 @@ import sys
 from tkinter import messagebox
 from tkinter import filedialog
 
-
 #Функции локальные
 from ClassPerplexity import CalPerplexity
 from CheckingLink import ClassCheckingLink
-#from Clib.ToolsForCompile.main import resultSpacesAndCount
+from Clib.ToolsForCompile.main import resultSpacesAndCount
 from ClassCheckSecondName import CheckSecondName
 
-# Начинаем скачивать модель до запуска интерфейса в отдельном потоке
-download_model_in__different_thread = threading.Thread(target = CalPerplexity, args = ("ForDownload","yandex.ru","-m"))
-download_model_in__different_thread.start()
+
 
 class App(ctk.CTk, TkinterDnD.DnDWrapper):
     def __init__(self):
@@ -87,7 +83,7 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
                                               )
         #авторы
         self.authorsText = ctk.CTkLabel(master=self,
-                                        text="Авторы: Владислав, Виктор, Василий, Михаил",
+                                        text="Vladislav, Victor, Wasiliy, Michael",
                                         fg_color="#4A4563",
                                         font=("Arial", 16, "normal")
                                         )
@@ -146,7 +142,7 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
             self.resultEntryText.configure(state="disabled")
 
     def loadingBtn(self):
-        texts = ["Загрузка.", "Загрузка..", "Загрузка..."]
+        texts = ["Загрузка...", "Загрузка..", "Загрузка."]
         i = 0
         while self.isloading == True:
             self.button.configure(text=texts[i])
@@ -170,20 +166,19 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         self.buttonsave.configure(state="normal")
 
     def Functions(self, checktext):
-
         resultPerlexity = CalPerplexity(checktext, "yandex.ru", "-f").getter().get("perpl")
-        
 
         resultCheckingLink = ClassCheckingLink(checktext, 3).getter()
 
+        resultspacesandcount = resultSpacesAndCount(checktext)
 
         resultCheckSecondName = CheckSecondName(checktext).getter()
-
-
+        print("chcek secondname")
         result = "Перплексность: " + str(resultPerlexity) +"\n\n" + "Проверка ссылок : " \
                  + str(resultCheckingLink) + \
                  "\n\n" + "Процент верифицированных имен " + str(resultCheckSecondName.get("procent")) + "\n\n" + "Верефицированные имена "+ str(resultCheckSecondName.get("veriefy_name")).replace('[', '').replace(']', '    ').replace("\n", ", ")\
-                 + "\n\n"+"Неверифицированные имена " +  str(resultCheckSecondName.get("not_variefy_name")).replace('[', '').replace(']', '    ').replace("\n", ", ") + "\n\n"
+                 + "\n\n"+"Неверифицированные имена " +  str(resultCheckSecondName.get("not_variefy_name")).replace('[', '').replace(']', '    ').replace("\n", ", ") + "\n\n"\
+                 +"\n\n" + "Количество предложений где количество пробелов перед точкой похоже на соседние "+str(resultspacesandcount[0]) + "\n\n" + "количество точек в тексте " + str(resultspacesandcount[1])
 
 
         return result
