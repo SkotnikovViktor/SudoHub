@@ -26,25 +26,25 @@ class CalPerplexity:
 
         
         if not self.MODEL_PATH.exists():
-            if self.is_connect(self.host) == False:
+            if self.__is_connect(self.host) == False:
                 print("[WARNING] Модель не будет загружена, локальная отсутствует.")
                 return
         
             else:
                 print("[INFO] Загрузка модели...")
                 self.downloads_model()
-                self.text_verification(self.text)
+                self.__text_verification(self.text)
         else:
             print("[INFO] Используется локальная модель...")
         
 
-            if self.downloads_local_model() and self.tokenizer != None:
-                    self.text_verification(self.text)
+            if self.__downloads_local_model() and self.tokenizer != None:
+                    self.__text_verification(self.text)
         
 
 
 
-    def is_connect(self, host: str) -> bool:
+    def __is_connect(self, host: str) -> bool:
         try:
             with socket.create_connection((host, 80), timeout=2):
                 return True
@@ -80,7 +80,7 @@ class CalPerplexity:
  
 
 
-    def downloads_local_model(self):
+    def __downloads_local_model(self):
         try:
 
             self.tokenizer = AutoTokenizer.from_pretrained(self.MODEL_PATH)
@@ -98,17 +98,22 @@ class CalPerplexity:
 
 
 
-    def text_verification(self, text):
+    def __text_verification(self, text):
         inputs = self.tokenizer(text, return_tensors='pt', truncation=True, max_length=512)
         with torch.no_grad():
             outputs = self.model(**inputs, labels=inputs['input_ids'])
             loss = outputs.loss
         self.result = math.exp(loss.item())
+    
 
 
-def result_returnClassPerplexity(text): # Функция, которая возвращает результат работы класса в файл GUI
+    def getter(self):
+        return {"perpl": round(self.result, 1)}
+
+
+#def result_returnClassPerplexity(text): # Функция, которая возвращает результат работы класса в файл GUI
       
-    a = CalPerplexity(text,"yandex.ru", "-f")
-    dict_result_perplexity = {"perpl": round(a.result, 1)}
+ #   a = CalPerplexity(text,"yandex.ru", "-f")
+  #  dict_result_perplexity = {"perpl": round(a.result, 1)}
 
-    return dict_result_perplexity
+   # return dict_result_perplexity

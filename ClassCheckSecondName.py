@@ -56,7 +56,3 @@ class CheckSecondName:
 
 
 
-
-text = "Тестинг А. С. уппупупуп"
-res = CheckSecondName(text)
-print(res.getter())

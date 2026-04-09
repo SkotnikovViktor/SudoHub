@@ -13,7 +13,7 @@ from tkinter import filedialog
 
 
 #Функции локальные
-from ClassPerplexity import result_returnClassPerplexity, CalPerplexity
+from ClassPerplexity import CalPerplexity
 from CheckingLink import ClassCheckingLink
 #from Clib.ToolsForCompile.main import resultSpacesAndCount
 from ClassCheckSecondName import CheckSecondName
@@ -87,7 +87,7 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
                                               )
         #авторы
         self.authorsText = ctk.CTkLabel(master=self,
-                                        text="Vladislav, Victor, Wasiliy, Michael",
+                                        text="Авторы: Владислав, Виктор, Василий, Михаил",
                                         fg_color="#4A4563",
                                         font=("Arial", 16, "normal")
                                         )
@@ -170,19 +170,21 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         self.buttonsave.configure(state="normal")
 
     def Functions(self, checktext):
-        #time.sleep(20)
-        resultPerlexity = result_returnClassPerplexity(checktext)
-        print("perp")
-        resultCheckingLink = ClassCheckingLink(checktext, 3)
-        print("Проверка ссылок")
-        #resultspacesandcount = resultSpacesAndCount(checktext)
+
+        resultPerlexity = CalPerplexity(checktext, "yandex.ru", "-f").getter().get("perpl")
+        
+
+        resultCheckingLink = ClassCheckingLink(checktext, 3).getter()
+
+
         resultCheckSecondName = CheckSecondName(checktext).getter()
-        print("chcek secondname")
-        result = "Перплексность: " + str(resultPerlexity.get("perpl")) +"\n\n" + "Проверка ссылок : " \
-                 + str(resultCheckingLink.getter()) + \
+
+
+        result = "Перплексность: " + str(resultPerlexity) +"\n\n" + "Проверка ссылок : " \
+                 + str(resultCheckingLink) + \
                  "\n\n" + "Процент верифицированных имен " + str(resultCheckSecondName.get("procent")) + "\n\n" + "Верефицированные имена "+ str(resultCheckSecondName.get("veriefy_name")).replace('[', '').replace(']', '    ').replace("\n", ", ")\
                  + "\n\n"+"Неверифицированные имена " +  str(resultCheckSecondName.get("not_variefy_name")).replace('[', '').replace(']', '    ').replace("\n", ", ") + "\n\n"
-        #result += str(resultspacesandcount)
+
 
         return result
 
