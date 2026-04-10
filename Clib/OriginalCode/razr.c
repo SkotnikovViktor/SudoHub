@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
 int main() {
     char text[] = "Это предложение с тремя пробелами до точки. Второе с двумя пробелами. Третье. Четвертое предложение с четырьмя пробелами до точки.";
     int dotCount;

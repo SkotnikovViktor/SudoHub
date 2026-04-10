@@ -169,6 +169,7 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         resultPerlexity = CalPerplexity(checktext, "yandex.ru", "-f").getter().get("perpl")
 
         resultCheckingLink = ClassCheckingLink(checktext, 3).getter()
+        print(f"Подсчёт ссылок завершён - {resultCheckingLink}")
 
         resultspacesandcount = resultSpacesAndCount(checktext)
 

@@ -10,7 +10,7 @@ class ClassCheckingLink:
     (?<![.,;:!?])
     ''', flags=re.VERBOSE) # Создание паттерна для поиска ссылок
 
-    def __init__(self, text: str, timeout = 10) -> None:
+    def __init__(self, text: str, timeout) -> None:
         self.text = text
         self.result = None
         self.timeout = timeout
@@ -67,6 +67,8 @@ class ClassCheckingLink:
     def getter(self):
         return self.result # Геттер возвращает результат количество рабочих ссылок
     
+
+
 
 
 
