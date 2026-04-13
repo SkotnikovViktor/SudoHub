@@ -2,6 +2,54 @@ import requests
 import re
 import asyncio
 
+
+class ClassDetectedWhiteList:
+
+    def __init__(self):
+        self.list_check_website = ["https://www.deepseek.com/en/", "https://github.com"]
+        self.result = None # Переменная результата
+        self.__detected_white_list()
+
+
+
+    def __detected_white_list(self) -> None:
+        
+
+        for website in range(2):
+
+            try: 
+                requests.head(self.list_check_website[website]) # Отправляет HEAD запрос 
+            except Exception as e:
+                self.result += 1
+
+
+
+            try:
+                requests.get(self.list_check_website[website], timeout = 3) # Отправляем GET запрос
+            except Exception as e:
+                self.result += 1
+            
+
+
+        
+
+        if 2 <= self.result <= 4: 
+            self.result = 1
+        
+        else:
+            self.result = 0
+    
+
+
+
+    def getter(self) -> int:
+        return self.result
+
+
+
+
+
+
 class ClassCheckingLink:
 
     URL_PATTERN = re.compile(r'''(?xi)
@@ -22,6 +70,12 @@ class ClassCheckingLink:
 
 
     async def __function_check_link(self, url: str) -> bool | Exception:
+
+        detected_white_list = ClassDetectedWhiteList() # Проверка на белые списки
+        if detected_white_list.getter() == 1:
+            self.result = "Включены белые списки проверка невозможна."
+
+
         try:
             respone = requests.head(url = url, timeout = self.timeout, allow_redirects = True) # Отправляем HEAD запрос
 
@@ -68,18 +122,6 @@ class ClassCheckingLink:
         return self.result # Геттер возвращает результат количество рабочих ссылок
     
 
-
-
-
-
-
-
-#res = CheckingLink("https://lordserialzinc.lol/82-vstat-na-nogi-u62k.html fdjgf https://lordserialin.ol/82-vstat-na-nogi-u62k.html", 10)
-#print(res.getter())
-
-
-"""Как работать с классом? Во-первых нужно создать объект класса как в 77 строчке, название можно выбрать любое.
-Во-вторых, из ранее созданого объекта нужно вызвать функцию getter() как в 78 строчке и сохранить в переменную результат проверки"""
 
 
     
