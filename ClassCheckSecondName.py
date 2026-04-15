@@ -3,6 +3,26 @@ import wikipedia
 import asyncio
 import time
 
+from natasha import (
+    Segmenter,
+    MorphVocab,
+    NewsEmbedding,
+    NewsMorphTagger,
+    NewsSyntaxParser,
+    NewsNERTagger,
+    Doc
+)
+
+# Разовая инициализация
+segmenter = Segmenter()
+morph_vocab = MorphVocab()
+emb = NewsEmbedding()
+morph_tagger = NewsMorphTagger(emb)
+syntax_parser = NewsSyntaxParser(emb)
+ner_tagger = NewsNERTagger(emb)
+
+
+
 class CheckSecondName:
 
     NAME_PATTERN= re.compile(r'(?<![А-ЯЁа-яё])(?:[А-ЯЁ][а-яё]+(?:-[А-ЯЁ][а-яё]+)?|[А-ЯЁ]\.)(?:\s+(?:[А-ЯЁ][а-яё]+(?:-[А-ЯЁ][а-яё]+)?|[А-ЯЁ]\.)){0,2}(?![А-ЯЁа-яё])', flags = re.VERBOSE) # Создание паттерна 
@@ -27,7 +47,12 @@ class CheckSecondName:
     async def __check_name_in_wiki(self):
 
         for name in self.list_second_name:
-            result_checking = wikipedia.search(name.strip())
+
+            try: # Проверка на доуступность
+                result_checking = wikipedia.search(name.strip())
+            
+            except Exception as error_check_name_in_wiki: # Если ВИКИ не доступно, то продолжаем без проверки этого имении
+                continue
 
             if len(result_checking) != 0:
                 self.count_verify_name += 1

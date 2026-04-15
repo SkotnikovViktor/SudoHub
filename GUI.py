@@ -10,7 +10,7 @@ import sys
 from tkinter import messagebox
 from tkinter import filedialog
 
-#Функции локальные
+# Локальные классы
 from ClassPerplexity import CalPerplexity
 from CheckingLink import ClassCheckingLink
 from Clib.ToolsForCompile.main import resultSpacesAndCount
