@@ -6,3 +6,7 @@ result.txt
 build/
 dist/
 __pycache__/
+Models\
+build\
+dist\
+__pycache__\
