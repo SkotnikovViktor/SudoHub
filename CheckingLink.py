@@ -3,7 +3,7 @@ import re
 import asyncio
 
 
-class ClassDetectedWhiteList:
+class ClassDetectedWhiteList: # Класс для првоерки белых списков
 
     def __init__(self):
         self.list_check_website = ["https://www.deepseek.com/en/", "https://github.com"]
@@ -73,7 +73,7 @@ class ClassCheckingLink:
 
         detected_white_list = ClassDetectedWhiteList() # Проверка на белые списки
         if detected_white_list.getter() == 1:
-            self.result = "Включены белые списки проверка невозможна."
+            return "WhiteList"
 
 
         try:
@@ -109,6 +109,10 @@ class ClassCheckingLink:
                 
                 elif isinstance(result, requests.exceptions.RequestException):
                     continue
+                    
+                elif result == "WhiteList":
+                    self.result = "Включены белые списки проверка невозможна."
+
         
 
         try: # Проверка переменной рабочих ссылок на не 0
