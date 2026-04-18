@@ -2,7 +2,7 @@ import sqlite3, alg_wrapper
 
 def search (text):
     # Подключение к DataBase
-    conn = sqlite3.connect('Data/Main.db')
+    conn = sqlite3.connect('Main.db')
     cursor = conn.cursor()
     
     # Удаление прошлых данных
