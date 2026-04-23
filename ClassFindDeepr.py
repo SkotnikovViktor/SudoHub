@@ -6,9 +6,7 @@ class ClassFindDeepr:
 
     def __init__(self, text):
 
-          
-
-        base_symbol = r"!,.:;?\/-_"
+        base_symbol = r"!,.:;?\/-_@~`\"()=+*<>"
         self.text = text
 
         for symbol in base_symbol: # Очистка текста от знаков
