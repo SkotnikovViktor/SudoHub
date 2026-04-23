@@ -14,7 +14,9 @@ from tkinter import filedialog
 from ClassPerplexity import CalPerplexity
 from CheckingLink import ClassCheckingLink
 from Clib.ToolsForCompile.main import resultSpacesAndCount
+from ClassFindDeepr import ClassFindDeepr
 #from ClassCheckSecondName import CheckSecondName
+
 
 
 
@@ -178,7 +180,7 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         time.sleep(0.1)
         self.resultCheckingLink = ClassCheckingLink(checktext, 3).getter()
         time.sleep(0.1)
-        self.append_result(f"Процент рабочих ссылок  {self.resultCheckingLink}")
+        self.append_result(f"Процент рабочих ссылок:  {self.resultCheckingLink if self.resultCheckingLink != 0 else 'В тексте нет ссылок'}\n")
         time.sleep(0.1)
 
         '''
@@ -193,27 +195,29 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         self.append_result(str(resultCheckSecondName.get("not_variefy_name")).replace('[', '').replace(']', '    ').replace("\n", ", "))
         '''
 
-        self.append_result("\n\nДеепричастия\n", "header")
+        self.append_result("\n\nДеепричастия", "header")
         time.sleep(0.1)
-        self.append_result("\nКоличество деепричастий в тексте:   ")
+        FindDeepr = ClassFindDeepr(checktext).getter().get("count_deepr_in_text")
+        self.append_result(f"\nКоличество деепричастий в тексте: {round((FindDeepr), 3) if FindDeepr != 0 else 'В тексте нет деепричастий'}\n")
         time.sleep(0.1)
-        self.append_result("\nНорма для человека - М, норма для ИИ - Р")
+        self.append_result("\nЗначение для человека - 0.9 и выше, значение для ИИ - 0.8 и ниже")
         time.sleep(0.1)
 
         self.append_result("\n\nПредложения:\n", "header")
         time.sleep(0.1)
         resultspacesandcount = resultSpacesAndCount(checktext)
         self.spaces = resultspacesandcount[0]
-        self.append_result(f"Количество пробелов в тексте {self.spaces}")
+        self.append_result(f"Количество пробелов в тексте: {self.spaces - 1}")
         time.sleep(0.1)
         self.points = resultspacesandcount[1]
-        self.append_result(f"\nКоличество точек в тексте: {self.points}")
+        self.append_result(f"\nКоличество точек в тексте: {self.points - 1}")
         time.sleep(0.1)
 
         self.append_result("\n\nДругое:\n", "header")
         time.sleep(0.1)
         self.resultPerlexity = CalPerplexity(checktext, "yandex.ru", "-f").getter().get("perpl")
         self.append_result(f"Перплексность: {self.resultPerlexity}")
+        self.append_result("\nЗначение для человека - 40 и выше, значение для ИИ - 40 и ниже")
         time.sleep(0.1)
 
         self.append_result("\n\nРезультат: ", "header")
