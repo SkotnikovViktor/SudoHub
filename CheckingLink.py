@@ -31,9 +31,10 @@ class ClassDetectedWhiteList: # Класс для првоерки белых с
             
 
 
-        
+        if self.result is None:
+            self.result = 0
 
-        if 2 <= self.result <= 4: 
+        elif 2 <= self.result <= 4: 
             self.result = 1
         
         else:
@@ -123,6 +124,7 @@ class ClassCheckingLink:
 
 
     def getter(self):
+        print(self.result)
         return self.result # Геттер возвращает результат количество рабочих ссылок
     
 
