@@ -7,18 +7,18 @@ class ClassDetectedWhiteList: # Класс для првоерки белых с
 
     def __init__(self):
         self.list_check_website = ["https://www.deepseek.com/en/", "https://github.com"]
-        self.result = None # Переменная результата
+        self.result = 0 # Переменная результата
         self.__detected_white_list()
 
 
 
-    def __detected_white_list(self) -> None:
+    def __detected_white_list(self) -> int:
         
 
         for website in range(2):
 
             try: 
-                requests.head(self.list_check_website[website]) # Отправляет HEAD запрос 
+                requests.head(self.list_check_website[website]) # Отправляем HEAD запрос 
             except Exception as e:
                 self.result += 1
 
