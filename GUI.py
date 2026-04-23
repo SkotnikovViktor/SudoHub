@@ -195,12 +195,12 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         self.append_result(str(resultCheckSecondName.get("not_variefy_name")).replace('[', '').replace(']', '    ').replace("\n", ", "))
         '''
 
-        self.append_result("\n\nДеепричастия", "header")
+        self.append_result("\n\nДеепричастия:", "header")
         time.sleep(0.1)
         FindDeepr = ClassFindDeepr(checktext).getter().get("count_deepr_in_text")
         self.append_result(f"\nКоличество деепричастий в тексте: {round((FindDeepr), 3) if FindDeepr != 0 else 'В тексте нет деепричастий'}\n")
         time.sleep(0.1)
-        self.append_result("\nЗначение для человека - 0.9 и выше, значение для ИИ - 0.8 и ниже")
+        self.append_result("Значение для человека - 0.9 и выше, значение для ИИ - 0.8 и ниже")
         time.sleep(0.1)
 
         self.append_result("\n\nПредложения:\n", "header")
