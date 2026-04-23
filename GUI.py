@@ -14,7 +14,7 @@ from tkinter import filedialog
 from ClassPerplexity import CalPerplexity
 from CheckingLink import ClassCheckingLink
 from Clib.ToolsForCompile.main import resultSpacesAndCount
-from ClassCheckSecondName import CheckSecondName
+#from ClassCheckSecondName import CheckSecondName
 
 
 
@@ -48,7 +48,7 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
                                     text_color_disabled="#ffffff",)
         #кнопка сохранить
         self.buttonsave = ctk.CTkButton(master=self,
-                                        text="Сохранить результат\n в txt",
+                                        text="Сохранить результат\n в текстовый файл",
                                         command= self.btn_save,
                                         width=312,
                                         height=81,
@@ -81,6 +81,10 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
                                               wrap="word",
                                               state="disabled",
                                               )
+        #Добавление тегов
+        self.resultEntryText._textbox.tag_configure("header", font=("Arial", 15, "bold"))
+        self.resultEntryText._textbox.tag_configure("normal", font=("Arial", 13))
+
         #авторы
         self.authorsText = ctk.CTkLabel(master=self,
                                         text="Vladislav, Victor, Wasiliy, Michael",
@@ -131,58 +135,93 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
             self.isloading = True
             self.button.configure(state="disabled", fg_color="#59CF6A")
             self.buttonsave.configure(state="disabled")
-            loadingThread = threading.Thread(target=self.loadingBtn, daemon=True)
-            loadingThread.start()
+            #loadingThread = threading.Thread(target=self.loadingBtn, daemon=True, args=(self, 0))
+            #loadingThread.start()
+
             thread = threading.Thread(target=self.loadFunctions, daemon=True)
             thread.start()
+            self.loadingBtn(0)
 
         else:
             self.resultEntryText.configure(state="normal")
             self.resultEntryText.insert("1.0", "Введите что-нибудь")
             self.resultEntryText.configure(state="disabled")
 
-    def loadingBtn(self):
+    def loadingBtn(self, step):
         texts = ["Загрузка...", "Загрузка..", "Загрузка."]
-        i = 0
-        while self.isloading == True:
-            self.button.configure(text=texts[i])
-            i += 1
-            if i >= 3:
-                i = 0
-            time.sleep(0.5)
+        if self.isloading == True:
+            self.button.configure(text=texts[step%3])
+            self.after(500, self.loadingBtn, step+1)
+
 
     def loadFunctions(self):
-        result = self.Functions(self.checktext)
-        #self.after(0, self.FunctionsComplite, result) #Главный поток
-        self.FunctionsComplite(result)
+        self.Functions(self.checktext)
+        self.after(200, self.FunctionsComplite) #Передать в лавный поток
+        #self.FunctionsComplite(result)
 
-    def FunctionsComplite(self, result):
+    def append_result(self, text, tag="normal"):
+        self.after(500, self.append_result_ui, text, tag)
+
+    def append_result_ui(self, text, tag = "normal"):
+        self.resultEntryText.configure(state="normal")
+        self.resultEntryText.insert("end", text, tag)
+        self.resultEntryText.configure(state="disabled")
+
+    def FunctionsComplite(self):
         self.isloading = False
         self.button.configure(text="Проверить", state="normal")
-        self.resultEntryText.configure(state="normal")
-        self.resultEntryText.delete("1.0", "end")
-        self.resultEntryText.insert("1.0", result)
-        self.resultEntryText.configure(state="disabled")
         self.buttonsave.configure(state="normal")
 
     def Functions(self, checktext):
-        resultPerlexity = CalPerplexity(checktext, "yandex.ru", "-f").getter().get("perpl")
+        time.sleep(0.1)
+        self.append_result("Ссылки:\n", "header")
+        time.sleep(0.1)
+        self.resultCheckingLink = ClassCheckingLink(checktext, 3).getter()
+        time.sleep(0.1)
+        self.append_result(f"Процент рабочих ссылок  {self.resultCheckingLink}")
+        time.sleep(0.1)
 
-        resultCheckingLink = ClassCheckingLink(checktext, 3).getter()
-        print(f"Подсчёт ссылок завершён - {resultCheckingLink}")
-
-        resultspacesandcount = resultSpacesAndCount(checktext)
-
+        '''
+        self.append_result("\n\nИмена:\n", "header")
         resultCheckSecondName = CheckSecondName(checktext).getter()
-        print("chcek secondname")
-        result = "Перплексность: " + str(resultPerlexity) +"\n\n" + "Проверка ссылок : " \
-                 + str(resultCheckingLink) + \
-                 "\n\n" + "Процент верифицированных имен " + str(resultCheckSecondName.get("procent")) + "\n\n" + "Верефицированные имена "+ str(resultCheckSecondName.get("veriefy_name")).replace('[', '').replace(']', '    ').replace("\n", ", ")\
-                 + "\n\n"+"Неверифицированные имена " +  str(resultCheckSecondName.get("not_variefy_name")).replace('[', '').replace(']', '    ').replace("\n", ", ") + "\n\n"\
-                 +"\n\n" + "Количество предложений где количество пробелов перед точкой похоже на соседние "+str(resultspacesandcount[0]) + "\n\n" + "количество точек в тексте " + str(resultspacesandcount[1])
+        self.append_result("Известных имен в тексте: ")
+        self.resultProcentSecondName = resultCheckSecondName.get("procent")
+        self.append_result(self.resultProcentSecondName)
+        self.append_result("\nИзвестные имена:  ")
+        self.append_result(str(resultCheckSecondName.get("veriefy_name")).replace('[', '').replace(']', '    ').replace("\n", ", "))
+        self.append_result("\nНеизвестные имена или выдуманные:  ")
+        self.append_result(str(resultCheckSecondName.get("not_variefy_name")).replace('[', '').replace(']', '    ').replace("\n", ", "))
+        '''
 
+        self.append_result("\n\nДеепричастия\n", "header")
+        time.sleep(0.1)
+        self.append_result("\nКоличество деепричастий в тексте:   ")
+        time.sleep(0.1)
+        self.append_result("\nНорма для человека - М, норма для ИИ - Р")
+        time.sleep(0.1)
 
-        return result
+        self.append_result("\n\nПредложения:\n", "header")
+        time.sleep(0.1)
+        resultspacesandcount = resultSpacesAndCount(checktext)
+        self.spaces = resultspacesandcount[0]
+        self.append_result(f"Количество пробелов в тексте {self.spaces}")
+        time.sleep(0.1)
+        self.points = resultspacesandcount[1]
+        self.append_result(f"\nКоличество точек в тексте: {self.points}")
+        time.sleep(0.1)
+
+        self.append_result("\n\nДругое:\n", "header")
+        time.sleep(0.1)
+        self.resultPerlexity = CalPerplexity(checktext, "yandex.ru", "-f").getter().get("perpl")
+        self.append_result(f"Перплексность: {self.resultPerlexity}")
+        time.sleep(0.1)
+
+        self.append_result("\n\nРезультат: ", "header")
+        time.sleep(0.1)
+        #функция проверки ИИ
+        self.append_result("%ИИ")
+        time.sleep(0.1)
+
 
 
     def writeplaceholder(self, event=None):
@@ -220,6 +259,7 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
             file = docx.Document(filepatch)
             for paragraph in file.paragraphs:
                 content += paragraph.text
+
         else:
             content = "Поддерживаемые типы: docx, txt, pdf"
 
