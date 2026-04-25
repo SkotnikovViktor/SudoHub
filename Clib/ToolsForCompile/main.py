@@ -14,5 +14,6 @@ def resultSpacesAndCount(text):
     spaces = alg_wrapper.count_spaces_before_each_dot(text)
     # 3. Вычисление "shotchic"
     result_1 = alg_wrapper.py_shotchic(spaces) + 1
-    result = [result_1, len(spaces)]
+    result = [result_1, len(spaces) - 1] 
     return result
+

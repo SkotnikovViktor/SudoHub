@@ -110,10 +110,3 @@ class CalPerplexity:
     def getter(self):
         return {"perpl": round(self.result, 1)}
 
-
-#def result_returnClassPerplexity(text): # Функция, которая возвращает результат работы класса в файл GUI
-      
- #   a = CalPerplexity(text,"yandex.ru", "-f")
-  #  dict_result_perplexity = {"perpl": round(a.result, 1)}
-
-   # return dict_result_perplexity

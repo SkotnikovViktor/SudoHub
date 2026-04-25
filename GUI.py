@@ -174,13 +174,25 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         self.button.configure(text="Проверить", state="normal")
         self.buttonsave.configure(state="normal")
 
+    
+    def procent_chet(self, x, y):
+        if x != 0:
+            return round((y * 100) / x) # Высчитываем процент и округляем до десятых, если x не 0
+        
+        return 0
+
+
     def Functions(self, checktext):
+        count = 0
         time.sleep(0.1)
         self.append_result("Ссылки:\n", "header")
         time.sleep(0.1)
         self.resultCheckingLink = ClassCheckingLink(checktext, 3).getter()
         time.sleep(0.1)
-        self.append_result(f"Процент рабочих ссылок:  {self.resultCheckingLink if self.resultCheckingLink != 0 else 'В тексте нет ссылок'}\n")
+        result_link = self.resultCheckingLink
+        self.append_result(f"Процент рабочих ссылок:  {result_link if result_link != 0 else 'В тексте нет ссылок'}\n")
+        if result_link <= 80:
+            count += 1
         time.sleep(0.1)
 
         '''
@@ -199,6 +211,9 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         time.sleep(0.1)
         FindDeepr = ClassFindDeepr(checktext).getter().get("count_deepr_in_text")
         self.append_result(f"\nКоличество деепричастий в тексте: {round((FindDeepr), 3) if FindDeepr != 0 else 'В тексте нет деепричастий'}\n")
+        if FindDeepr <= 0.8:
+            count += 1
+
         time.sleep(0.1)
         self.append_result("Значение для человека - 0.9 и выше, значение для ИИ - 0.8 и ниже")
         time.sleep(0.1)
@@ -206,24 +221,29 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         self.append_result("\n\nПредложения:\n", "header")
         time.sleep(0.1)
         resultspacesandcount = resultSpacesAndCount(checktext)
-        self.spaces = resultspacesandcount[0]
-        self.append_result(f"Количество пробелов в тексте: {self.spaces - 1}")
+        self.pred_with_odin_count_word = resultspacesandcount[0]
+        self.append_result(f"Количество предложений с одинаковым количеством слов: {self.pred_with_odin_count_word}")
         time.sleep(0.1)
-        self.points = resultspacesandcount[1]
-        self.append_result(f"\nКоличество точек в тексте: {self.points - 1}")
+        self.count_pred = resultspacesandcount[1]
+        self.append_result(f"\nКоличество предложений в тексте: {self.count_pred}")
         time.sleep(0.1)
+        if self.procent_chet(self.count_pred, self.pred_with_odin_count_word) >= 50:
+            count += 1
+        
 
         self.append_result("\n\nДругое:\n", "header")
         time.sleep(0.1)
         self.resultPerlexity = CalPerplexity(checktext, "yandex.ru", "-f").getter().get("perpl")
-        self.append_result(f"Перплексность: {self.resultPerlexity}")
-        self.append_result("\nЗначение для человека - 40 и выше, значение для ИИ - 40 и ниже")
+        self.append_result(f"Перплексность: {self.resultPerlexity}") 
+        self.append_result("\nЗначение для человека - 25 и выше, значение для ИИ - 25 и ниже")
         time.sleep(0.1)
+        if self.resultPerlexity <= 25:
+            count += 1
 
         self.append_result("\n\nРезультат: ", "header")
         time.sleep(0.1)
         #функция проверки ИИ
-        self.append_result("%ИИ")
+        self.append_result(f"{self.procent_chet(4, count)} % ИИ")
         time.sleep(0.1)
 
 
