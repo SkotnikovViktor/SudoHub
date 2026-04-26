@@ -224,10 +224,10 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         time.sleep(0.1)
         resultspacesandcount = resultSpacesAndCount(checktext)
         self.pred_with_odin_count_word = resultspacesandcount[0]
-        self.append_result(f"Количество предложений где количество пробелов перед точкой похоже на соседние: {self.pred_with_odin_count_word}")
+        self.append_result(f"Количество предложений в тексте: {self.pred_with_odin_count_word}")
         time.sleep(0.1)
         self.count_pred = resultspacesandcount[1]
-        self.append_result(f"\nКоличество предложений одинаковой длинны: {self.count_pred}")
+        self.append_result(f"\nКоличество предложений одинаковой длины: {self.count_pred}")
         time.sleep(0.1)
         if self.procent_chet(self.count_pred, self.pred_with_odin_count_word) >= 50:
             count += 1
