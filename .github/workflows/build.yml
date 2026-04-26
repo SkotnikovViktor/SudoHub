@@ -1,0 +1,47 @@
+name: Build SudoHub EXE
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller customtkinter tkinterdnd2 Pillow PyMuPDF python-docx transformers requests wikipedia cython setuptools pymorphy3
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Compile C-extension (alg_wrapper)
+        run: |
+          cd Clib/ToolsForCompile
+          python setup_windows.py build_ext --inplace
+          if (Test-Path "alg_wrapper*.pyd") {
+              mkdir -p ../Windows
+              copy alg_wrapper*.pyd ../Windows/
+          }
+          cd ../..
+
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller SudoHub.spec --clean --noconfirm
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SudoHub-Executable
+          path: dist/SudoHub/
+          if-no-files-found: error
