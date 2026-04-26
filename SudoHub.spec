@@ -32,7 +32,7 @@ def pkg_path(name):
 block_cipher = None
 
 a = Analysis(
-    ['GUI.py'],
+    ['main.py'],
     pathex=['.'],
     binaries=[
         # Скомпилированная C-библиотека (раскомментируйте если используете alg_wrapper)
@@ -79,6 +79,7 @@ a = Analysis(
         'math',
         'pathlib',
         'socket',
+        'pymorphy3'
     ],
     hookspath=[],
     hooksconfig={},
@@ -117,5 +118,5 @@ exe = EXE(
     strip=False,
     upx=True,                   # сжатие (нужен UPX: https://upx.github.io/)
     console=False,              # False = без чёрного окна консоли
-    icon='Assets/Images/ICO.ico',
+    icon='Assets/Images/SudoHub.ico',
 )
