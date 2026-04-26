@@ -4,6 +4,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 import math
 from pathlib import Path
 from typing import Optional
+import gc
 
 
 
@@ -19,27 +20,30 @@ class CalPerplexity:
         self.result = None
         self.key_status = key_status
 
-        if self.key_status == "-m":
-            self.downloads_model()
-
-
-
-        
-        if not self.MODEL_PATH.exists():
-            if self.__is_connect(self.host) == False:
-                print("[WARNING] Модель не будет загружена, локальная отсутствует.")
-                return
-        
-            else:
-                print("[INFO] Загрузка модели...")
+        try:
+            if self.key_status == "-m":
                 self.downloads_model()
-                self.__text_verification(self.text)
-        else:
-            print("[INFO] Используется локальная модель...")
-        
 
-            if self.__downloads_local_model() and self.tokenizer != None:
+
+
+
+            if not self.MODEL_PATH.exists():
+                if self.__is_connect(self.host) == False:
+                    print("[WARNING] Модель не будет загружена, локальная отсутствует.")
+                    return
+
+                else:
+                    print("[INFO] Загрузка модели...")
+                    self.downloads_model()
                     self.__text_verification(self.text)
+            else:
+                print("[INFO] Используется локальная модель...")
+
+
+                if self.__downloads_local_model() and self.tokenizer != None:
+                        self.__text_verification(self.text)
+        finally:
+            self.__cleanup()
         
 
 
@@ -75,6 +79,9 @@ class CalPerplexity:
             print(f"[ERROR] Ошибка скачивания модели - {e}")
             return False
         
+        finally:
+            self.__cleanup()
+        
 
         
  
@@ -104,6 +111,24 @@ class CalPerplexity:
             outputs = self.model(**inputs, labels=inputs['input_ids'])
             loss = outputs.loss
         self.result = math.exp(loss.item())
+    
+
+
+    def __cleanup(self):
+
+        if self.model is not None:
+            del self.model
+            self.model = None
+        
+        if self.tokenizer is not None:
+            del self.tokenizer
+            self.tokenizer = None
+        
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        
+
+        gc.collect()
     
 
 
