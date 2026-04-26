@@ -28,10 +28,16 @@ jobs:
       - name: Compile C-extension (alg_wrapper)
         run: |
           cd Clib/ToolsForCompile
-          python setup_windows.py build_ext --inplace
-          if (Test-Path "alg_wrapper*.pyd") {
-              mkdir -p ../Windows
-              copy alg_wrapper*.pyd ../Windows/
+          $pydFiles = Get-ChildItem -Filter "alg_wrapper*.pyd"
+          if ($pydFiles) {
+              # -Force позволяет "создать" папку, даже если она уже есть (без ошибки)
+              New-Item -ItemType Directory -Force -Path "../Windows"
+              # Копируем файл в целевую папку
+              Copy-Item "alg_wrapper*.pyd" -Destination "../Windows/"
+              Write-Host "Success: .pyd file copied to Clib/Windows"
+          } else {
+              Write-Error "Error: alg_wrapper*.pyd not found after compilation!"
+              exit 1
           }
           cd ../..
 
