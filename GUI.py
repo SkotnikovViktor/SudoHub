@@ -89,7 +89,7 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
 
         #авторы
         self.authorsText = ctk.CTkLabel(master=self,
-                                        text="Vladislav, Victor, Wasiliy, Michael",
+                                        text="Программа находится в активной разработке, возможны вылеты и неверная работа",
                                         fg_color="#4A4563",
                                         font=("Arial", 16, "normal")
                                         )
@@ -122,7 +122,7 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         self.button.place(x= 16, y=482)
         self.resultEntryText.place(x=358, y=80)
         self.buttonsave.place(x= 358, y=482)
-        self.authorsText.place(x=240, y=580)
+        self.authorsText.place(x=40, y=580)
 
         #рамка
         sepatator = ctk.CTkFrame(master=self, height=2, fg_color="black", width=313)
@@ -187,12 +187,14 @@ class App(ctk.CTk, TkinterDnD.DnDWrapper):
         time.sleep(0.1)
         self.append_result("Ссылки:\n", "header")
         time.sleep(0.1)
-        self.resultCheckingLink = ClassCheckingLink(checktext, 3).getter()
+        self.resultCheckingLink = ClassCheckingLink(checktext, timeout = 3).getter()
         time.sleep(0.1)
-        result_link = self.resultCheckingLink
-        self.append_result(f"Процент рабочих ссылок:  {result_link if result_link != 0 else 'В тексте нет ссылок'}\n")
-        if result_link <= 80:
+        self.append_result(f"Процент рабочих ссылок: {self.resultCheckingLink}\n")
+        if self.resultCheckingLink <= 40:
             count += 1
+
+
+
         time.sleep(0.1)
 
         '''

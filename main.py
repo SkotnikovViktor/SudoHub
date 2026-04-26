@@ -11,6 +11,8 @@ class Loader(ctk.CTk):
         user_height = self.winfo_screenheight()
         user_width = self.winfo_screenwidth()
         self.geometry(f"{width}x{height}+{(user_width-width) // 2}+{(user_height-height) // 2}")
+        
+
         self._set_appearance_mode("light")
 
         ctk.CTkLabel(self,
@@ -57,7 +59,7 @@ class Loader(ctk.CTk):
 
         self.set_status("Загрузка модели...", 50)
         from ClassPerplexity import CalPerplexity
-        CalPerplexity("1", "yandex.ru", "-m")
+        CalPerplexity("1", "yandex.ru", "-m") 
 
         self.set_status("Загрузка анализатора ссылок", 60)
         from CheckingLink import ClassCheckingLink

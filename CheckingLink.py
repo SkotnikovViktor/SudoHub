@@ -98,7 +98,7 @@ class ClassCheckingLink:
 
     async def __function_count_procent_work_link(self):
 
-        if len(self.list_link) == 0:
+        if len(self.list_link) == 0: 
             self.result = "В тексте нет ссылок"
 
         else:    
@@ -110,16 +110,18 @@ class ClassCheckingLink:
                 
                 elif isinstance(result, requests.exceptions.RequestException):
                     continue
-                    
-                elif result == "WhiteList":
-                    self.result = "Включены белые списки проверка невозможна."
+
 
         
 
-        try: # Проверка переменной рабочих ссылок на не 0
+        if self.list_link is None and self.count_work_link != 0 and self.list_link != "В тексте нет ссылок":
             self.result = (self.count_work_link * 100) / len(self.list_link) 
-        except ZeroDivisionError: # Если переменная 0, то без подсчёта присваевыем 0
-            self.result = 0 
+        
+        elif self.count_work_link == 0:
+            self.result = 0
+
+        elif self.result == "В тексте нет ссылок":
+            self.result = "В тексте нет ссылок"
     
 
 
