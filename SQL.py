@@ -25,9 +25,10 @@ def search (text):
         cursor.execute(f"UPDATE Words SET count = {count} WHERE word = {word};")
 
         result[word] = count
-
-    return result
     
     # Сохранение данных и закрытие соединения
     conn.commit()
     conn.close()
+
+    # Возвращаем результат
+    return result
