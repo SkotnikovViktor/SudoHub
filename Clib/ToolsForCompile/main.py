@@ -16,4 +16,5 @@ def resultSpacesAndCount(text):
     result_1 = alg_wrapper.py_shotchic(spaces) + 1
     result = [result_1, len(spaces) - 1] 
     return result
-
+def knut_morris_pratta(pattern: str, text: str):
+    return alg_wrapper.kmp_search(pattern, text)
