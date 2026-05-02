@@ -1,6 +1,9 @@
 import sqlite3, alg_wrapper
 
 def search (text):
+    # Создание словаря для возращения результата
+    result = {}
+    
     # Подключение к DataBase
     conn = sqlite3.connect('Main.db')
     cursor = conn.cursor()
@@ -20,11 +23,10 @@ def search (text):
         count = alg_wrapper.knut_morris_pratta(word, text)
     
         cursor.execute(f"UPDATE Words SET count = {count} WHERE word = {word};")
-    
-    result = cursor.execute("SELECT * FROM Words")
 
-    for i in range(len(result)):
-        print(f"{i[0]}:{i[1]}")
+        result[word] = count
+
+    return result
     
     # Сохранение данных и закрытие соединения
     conn.commit()
